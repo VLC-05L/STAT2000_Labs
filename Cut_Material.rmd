@@ -1,0 +1,384 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('jmv'))
+  install.packages('jmv')
+
+data <- haven::read_sav('Lab 01 - swimmers.sav')
+data <- as.data.frame(data)
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+
+## 1.3 Power and Sample Size Calculations for the Two Sample t-test
+
+When writing a study proposal for ethics approval (after designing the study) you need to specify the criteria upon which you are basing your sample size. Such criteria include the effect size you wish to detect (differences in group means), the within group variation (error standard deviation), significance level and power. During the process of designing the study, you may use some information to assess how power, sample size, effect size may each vary given the values for the other aspects, before finalising your study design.
+
+#### 1. Produce a power curve (for the case of comparing two population means) which identifies the power of detecting various differences in means, using the following information (which relates to the Yoghurt example from Lab 1):
+
+ - significance level, i.e., Prob(Type 1 error) = 0.05
+ - error standard deviation, i.e., within group standard deviation = 60
+ - sample size (across both groups split equally) = 14
+
+TODO
+
+##### Solutions
+
+Ⓢ 
+
+TODO
+
+#### 2. State the null and alternative hypotheses for the scenario
+
+##### Solutions
+
+Ⓢ 
+
+Let $\mu_A$ represent the population mean food energy content (per 200g serving) of yoghurt Brand A
+
+Let $\mu_B$ represent the population mean food energy content (per 200g serving) of yoghurt Brand B
+
+$$ H_0: \mu_A = \mu_B $$
+
+$$ H_a: \mu_A \ne \mu_B $$
+
+#### 3. Using the power curve, for the situation provided, what would be the approximate power to detect a difference in population mean food energy content of about 69kJ (per 200g serving) between the two types of yoghurt?
+
+##### Solutions
+
+Ⓢ 
+
+TODO
+
+We could say we have about 50% chance of detecting a difference in population mean food energy content of about 69 kJ (per 200g serving) between the two types of yoghurt (or a difference of about 1.15SE, 69/60). This is obtained using a 5% significance level with a total sample size of 14, and assuming the standard deviation of food energy for both types of yoghurt was 60 kJ per 200g serving. Note that this is a two sided test.
+
+#### 4. Consider how you would use these settings and the resultant graph as part of your preparation for a study to compare the food energy content (kJ per 200g serving) of two different brands of yoghurt. Provide a summary of the settings and the resultant information in the graph – as you might report succinctly within a study proposal.
+
+##### Solutions
+
+Ⓢ 
+
+The graph shows the relationship between the power of the hypothesis test to detect a difference between two population means and the size of that difference (effect size) in the scenario where we have:
+
+ - a total sample size of 14 (7 in each of two groups), 
+ - an error standard deviation (within-group standard deviation) of 60, and 
+ - P(Type I error), or significance level for making our decision whether or not to reject the null hypothesis, of 5%.
+    
+As with any hypothesis test, the bigger the effect size (i.e., the bigger the difference we are trying to detect) the greater the power (holding everything else constant).
+
+#### 5. Repeat the power curve for a different significance level, $\alpha$ = 0.20. Explain how and why changing the significance level affects the power of the test.
+
+N.B. A significance level of 0.2 would not normally be used as this risk of a Type I error would be too high for most situations. This value is used here simply so that the resultant curves are sufficiently distinguishable for you to more easily recognise the effect of changing the significance level.
+
+ - significance level, i.e., Prob(Type 1 error) = 0.20  instead of 0.05
+ - error standard deviation, i.e., within group standard deviation, = 60
+ - sample size (across both groups split equally) = 14
+
+##### Solutions
+
+Ⓢ 
+
+The new power curve shows the same type of relationship between power and effect size (difference) but the power will always be greater for increased significance level if everything else is kept constant.
+
+Increasing the significance level essentially says that we will accept a lower level of evidence to reject H0. This makes it easier to reject H0 thereby increasing the power.
+
+We can consider this in terms of the effect of the significance level on the critical value and hence rejection region. 
+
+#### 6. Repeat the power curve, with significance level 0.05, error standard deviation 60, and difference to detect 30. Explain what the settings and the resultant graph mean in the context of our yoghurt example (from Lab 1). 
+
+ - significance level, i.e., Prob(Type 1 error) = 0.05
+ - error standard deviation, i.e., within group standard deviation = 60
+ - sample size (across both groups split equally) not specified
+ - difference to detect = 30
+
+##### Solutions
+
+Ⓢ 
+
+The graph shows the relationship between power of the hypothesis test to detect the specified difference between two population means (of 30) and the total sample size (if the error standard deviation is 60 and we make our decision about rejecting H0 at a 5% significance level).
+
+Thus in the context of our yoghurt example and reading just one point from the graph, to have about 50% chance of detecting a difference in mean food energy content between two types of yoghurt of 30 kJ per 200g serving we would need a total sample size of about 64; a sample of 32 for each Brand (at a 5% significance level if the standard deviation of food energy for both types of yoghurt was 60 kJ per 200g serving).
+
+NOTE: If enter 64 for sample size then power = 50.3%
+
+#### 7. Repeat the power curve (power versus sample size) using a significance level of 0.20 instead of 0.05, retaining error standard deviation 60, and difference to detect 30. 
+
+##### Solutions
+
+Again the new power curve shows the same type of relationship between power and sample size HOWEVER the power will always be greater for increased significance level if everything else is kept constant. Consider the required sample size on the graph for a power of 0.5; it is about 27... much smaller than the 64 in exercise 4 when sig level was 0.05 (instead of 0.2)!
+
+#### 8. Summarise your understanding of the relationships between the power of an hypothesis test with each of
+
+ - the effect size you are trying to detect, 
+ - the variance of the populations being compared, 
+ - the significance level and the sample size.
+ 
+Consider whether increasing or decreasing each of these (effect size, error variance, sig level, sample size) will result in an increase in power.
+
+##### Solutions
+
+Ⓢ 
+
+We may summarise the relationship between the power of a test and other characteristics of the data. The following table summarises what increasing different parameters has on power.
+
+ | Increase       | Power            |
+ |----------------|------------------|
+ | Effect size    |   ➚ (increases)  |
+ | Error variance |   ➘ (decreases)  |
+ | Sample size    |   ➚ (increases)  |
+ | Alpha          |   ➚ (increases)  |
+
+#### 9. Suppose I wanted to have at least an 85% chance of detecting a difference in mean food energy content between two brands of yoghurt of at least 30 kJ per 200 g serving. How many samples of each brand of yoghurt do I need to measure for the given conditions  (sig = 0.05, error std devn = 60, difference = 30)?
+
+##### Solutions
+
+Ⓢ 
+
+TODO
+
+Sample required = 146 (73 per group) for conditions
+
+
+
+
+
+
+### 1.4 Self-study – practice analyses and reporting results
+
+ - A researcher has developed a language training system for infants. To test the system, 12 parents are randomly selected who are willing to use the language training system with their new born infants for two years. Samples of 12 different toddlers who do not use the language training system are also tested forming a control group; the data from the test are collected and analysed.
+
+ - At the end of the two-year test period, the number of words in each toddler’s vocabulary is measured. The data are in the data file [Lab 01 - swimmers.sav](Lab 01 - swimmers.sav).
+
+Based on the data, consider some basic exploratory analysis displays and then use the independent samples t-test in R or jamovi to assess whether the language training system is beneficial.
+
+Write a brief summary of the results of this study appropriate for inclusion in a report documenting the study.
+
+##### Solutions
+
+Define parameters
+
+ - Let $µ_1$ represent the population mean number of words in a toddler’s vocabulary having used the language training system (research group)
+
+ - Let $µ_2$ represent the population mean number of words in a toddler’s vocabulary having **NOT** used the language training system (control group)
+
+State Null ($H_0$) and Alternative ($H_a$) Hypotheses (in terms of the defined parameters)
+
+ - $H_0: µ_1 = µ_2$
+ - $H_a: µ_1 > µ_2$   (1-tailed test)   OR   $µ_1 - µ_2 > 0$
+
+Test statistic and p-value: $t$ = 2.266; p-value = 0.034 (for 2-tailed test), so for this test our p-value = 0.017 
+
+ - Strong evidence against the null hypothesis, suggests that there is a statistically significant difference in the population mean number of words in a toddler’s vocabulary, with the control group having less on average than the research group. It appears (based on this two-sample test without accounting for other explanatory variables) that the language training system results in a statistically significant increase in vocabulary.
+
+ - Although if we consider the confidence interval we are 95% confident that the population mean increase due to the system is between 1.8 and 42.1; which is quite wide and the lower limit is near zero, so practically speaking this may not be great evidence of it being beneficial.
+ 
+ 
+ 
+ 
+## 4.2 Bears in Space
+
+### 4.2.1 Completely Randomised Design
+
+This activity is based around launching small toy koala bears (ok, they aren't bears but Bears in Space is catchier than Koalas in Space) from a ramp in order to study factors that may affect launch distance. The class will be split into 3-4 teams with each team to have the following equipment:
+
+ - one wooden stick about 90 cm long
+ - one rubber band
+ - one pencil eraser
+ - one plastic spoon
+ - six koala "bear-o-nauts"
+ - one measuring tape
+ - one bucket with hole approximately 10 cm above ground level when bucket turned upside down.
+ 
+If there are not enough students for four teams then create two teams and each team should then have twelve "bear-o-nauts".
+
+Each team's first task is to build their launcher.
+
+ 1. Loop the rubber band enough times around one end of the launching platform (90cm wooden stick) such that the rubber band stays firmly in place but can still be rolled up and down the stick relatively easily. 
+ 2. Move (roll) the rubber band to the 40 cm mark. (Caution: Beware of splinters.) 
+ 3. Put the handle of the plastic spoon under the rubber band and place the eraser between the spoon handle and the stick to act as a fulcrum. 
+ 4. Ensure the fulcrum is reasonably close to the rubber band so that pulling back and then releasing the spoon will launch the spoon contents, i.e. your bear, into the air.
+You now have BLC (bear-o-naut launch capability) but don't start launching yet!
+The response variable we are interested in is the launch distance, measured from the front of the launching platform, but only in the direction parallel to the platform.
+We will now design and conduct an experiment to determine the effect of raising the end of our launching platform (thus altering height and angle from which bears are launched) a fixed distance.
+
+How many factors are of interest?
+
+We have one factor of interest, height of end of platform.
+
+How many levels does the factor of interest have?
+
+Two levels: zero (horizontal) and raised. The raised level corresponds to the end of the launching platform being supported about 10cm off the ground using the hole in the side of the inverted bucket. The plastic edge should fit into a notch in the end of the launching platform (stick).
+
+We will launch half of our bears at each level. 
+
+Discuss the following points with other members of your group and write a brief but clear procedure for your experiment.
+
+ 1. For a completely randomised design, all experimental units (bears) must be randomly allocated among the treatment groups (zero or raised height). Why is this important?
+ 2. Are you going to launch a set of bears at the zero position, then a set of bears in the raised position or use some other order? Why might this be important to consider?
+ 3. Based on your discussion of the previous two points, define a method to randomly allocate your bears to launch position and order of launch.
+ 4. Determine the exact procedure you will follow (an operational definition) to launch your bears and allocate jobs to group members. Possible jobs include holding the launching platform steady, loading the bear, launching the bear, measuring the distance travelled (in the direction parallel to the launching platform), monitoring alignment of measurement, recording of data, etc. Why is it important to develop, and follow, a careful protocol that tells exactly how the experiment is to be done?
+ 
+Carefully launch your bears and record your measurements. 
+
+Analyse your data appropriately and write a brief report.
+
+### 4.2.2 Randomised Block Design
+
+For each group, launching three bears at each level, it is unlikely you were able to detect a difference in mean launch distance -– we need greater power! However, together we have greater power -- as a class we have access to much more data.
+
+ 1. With the help of your tutor, combine data from all groups (teams) into a single data file and undertake a one-way fixed effects ANOVA.
+ 
+     - Has the increase in the amount of data provided sufficient evidence that raising the end of the launch platform causes a change in the average launch distance?
+   
+ 2. Can you see a problem with the combined analysis? Hint: What source of variation has not been accounted for in the analysis?
+ 
+     - Explain what a blocking variable is and why 'team' (or 'group') can be considered a blocking variable in this example.
+   
+ 3. Re-analyse the combined data but consider 'team' as a blocking variable. 
+ 
+     - In your software, identify 'team' as another fixed effect. 
+     - As do not wish to test for an interaction between team and height select MODEL option and in resulting pop-up window select 'Custom'
+     - Highlight the two variables. Ensure 'Type' is 'Main Effects' before including in the model. 
+
+ 4. Including the blocking variable in the above manner gives us an ANOVA with two factors. Although we haven't explicitly covered two-way ANOVA yet, it is basically an extension of the knowledge you have of one-way ANOVA. 
+Consider the row in the ANOVA table corresponding to raising the end of the launch platform. What is the p-value and your conclusion about the effect of 'team' on launch distance? How has specifying the blocking variable changed the results?
+
+ 5. Based on your analysis, what is the effect of team on launch distance?
+
+### 4.3 Group Project
+
+Time in this lab has been allocated for further discussions with your group members. Hopefully you are close to deciding on an appropriate scenario for your project. The Bears in Space exercise shows that an experiment does not have to be difficult or expensive. (Note: Copies or simple derivatives of this experiment are not acceptable project scenarios.)
+
+Once you have a basic idea for a project scenario you need to refine it by defining your response variable(s) and explanatory variable(s). What relationship between variables might be useful to explore? How will you measure the variables? Can you create an operational definition for each variable?
+
+Many researchers will consult statisticians when planning studies. Use your tutor as a sounding board now or during help session times (see Blackboard for times and locations!).
+
+### 4.4 Homework
+
+In labs we have considered data from studies of the following:
+
+ - the food energy content for two different brands of vanilla yoghurt.
+ - tonnes of wheat reaped for plots treated with one of three different types of fertiliser.
+ - the head widths (in millimetres) of a species of tiger beetle (Cicindela circumpicta) from three different localities.
+
+For each study:
+
+ 1. state whether it is appropriate to carry out a post-hoc comparison of means along with an explanation for your decision (HINT: it is only appropriate for one of the studies);
+ 2. carry out the multiple comparisons for the relevant study;
+ 3. review how well the data met the assumptions of the statistical analysis.
+ 
+ 
+ 
+## 6.3 Latin Squares
+
+This study considers the effects of a drug to stimulate growth in girls who are of short stature as a consequence of a particular syndrome. Blocking by subject and time period occurred whereby repeated measures for different treatments were applied to the same subject. A 5×5 Latin square design (below) was utilised for five subjects, five time periods, and five treatments. Each of the five time periods were two months duration, separated by an intervening month (no treatment was given). The five treatments were: `A`: no treatment (placebo); `B`: low dose of drug; `C`: moderate dose; `D`: high dose; `E`:very high dose. The dependent variable was the growth achieved (in millimetres) over the two-month period in which each treatment was administered. The results of the study are below and in *Lab 06 - Growth.sav*.
+
+This requires a three way ANOVA with the interaction terms removed.
+
+ | Week |   Mon  |   Tue  |   Wed  |  Thu   |   Fri  | Mean |
+ |------|--------|--------|--------|--------|--------|------|
+ |   1  | 18 (D) | 17 (C) | 14 (A) | 21 (B) | 17 (E) | 17.4 |
+ |   2  | 13 (C) | 34 (B) | 21 (E) | 16 (A) | 15 (D) | 17.8 |
+ |   3  | 7  (A) | 29 (D) | 32 (B) | 27 (E) | 13 (C) | 21.6 |
+ |   4  | 17 (E) | 13 (A) | 24 (C) | 31 (D) | 25 (B) | 22.0 |
+ |   5  | 21 (B) | 26 (E) | 26 (D) | 31 (C) | 7 (A)  | 22.2 |
+ | Mean |  15.2  |  21.8  |  23.4  |  25.2  |  15.4  | 20.6 |
+	
+![](R.svg) Usually we specify a *full factorial* model, which is where all the main effects *and* the interaction terms are analysed. For example, if we specify the model `GROWTH ~ PERIOD * SUBJECT * TREATMEN`, this means to construct a model with all the main effects, and all the interactions that can be made from the combinations of `PERIOD`, `SUBJECT` and `TREATMEN`. Indeed, `GROWTH ~ PERIOD * SUBJECT * TREATMEN` is equivalent to:
+
+```
+GROWTH ~ PERIOD + SUBJECT + TREATMEN + PERIOD:SUBJECT + PERIOD:TREATMEN + SUBJECT:TREATMEN + PERIOD:SUBJECT:TREATMEN
+```
+
+In this instance, we *only* want the main effects, and don't want any of the interaction terms. So for this example, you'll want the formula:
+
+```
+GROWTH ~ PERIOD + SUBJECT + TREATMEN
+```
+
+![](v.svg) Analyses → ANOVA → ANOVA. Begin by adding the 3 vairable `PERIOD`, `SUBJECT` and `TREATMENT` as factors. By default, jamovi (and most statistical software), when you specify multiple factors for an ANOVA, create a full-factorial model; that is, a model that contains all main effects, and all combinations of interactions too. So in this case, we end up with a model containing the terms:
+
+ - `PERIOD`
+ - `SUBJECT`
+ - `TREATMENT`
+ - `PERIOD ✻ SUBJECT`
+ - `PERIOD ✻ TREATMENT`
+ - `SUBJECT ✻ TREATMENT`
+ - `PERIOD ✻ SUBJECT ✻ TREATMENT`
+
+In this example, we **only** want the main effects. To remove the interactions from the model, go to the *Model* section, and remove the four interaction terms. This will give you a simpler ANOVA with only the main effects.
+
+##### Solutions
+
+Ⓢ 
+
+```{r}
+data <- haven::read_sav('Lab 06 - Growth.sav')
+data <- as.data.frame(data)
+
+data$PERIOD <- as.factor(data$PERIOD)
+data$SUBJECT <- as.factor(data$SUBJECT)
+data$TREATMEN <- as.factor(data$TREATMEN)
+
+model <- lm(GROWTH ~ PERIOD + SUBJECT + TREATMEN, data)
+anova(model)
+```
+
+#### 1. Test whether the growth of the girls differs for the five treatments.
+
+##### Solutions
+
+Ⓢ 
+
+```{r}
+aovObject <- aov(model)
+TukeyHSD(aovObject)$TREATMEN
+```
+
+$H_0: \alpha_i = 0$ for all i
+
+$H_a: \alpha_i \ne 0$ for any i
+
+where $\alpha_i$ is the effect on population mean growth of girls due to treatment i where the treatments were: A: no treatment ; B: low dose;  C: moderate  dose;  D: high dose; E: very high dose.
+
+ - The test  statistic is F = 10.6 (given by the ratio  of $MS_A$  to $MS_{error}$) 
+ - p-value is 0.001 (given by P (F4,12 > 10.6)).
+ - different drug  treatments have  a  statistically significant effect on population mean growth rate (p = 0.001).  - However, Tukey’s HSD test at a 5% significance level, it is actually only the placebo treatment that is different (lower) with the effect of the other four agents unable to be distinguished from each other.
+
+#### 2. Test whether blocking by subject was necessary. Also test whether blocking by time period was necessary.
+
+##### Solutions
+
+Assess: variance attributable to the effect of subject i.e. the different girls.
+
+ - The test statistic is F = 7.6 (given by the ratio of $MS_B$ to $MS_{error}$)
+ - p-value is 0.003 (given by P ($F_{4,12}$ > 7.6)).
+ - There is a statistically significant added component of variance in growth related to the differences between  the girls in the study (p = 0.003).
+
+Assess: added component of variance attributable to the effect of the different time periods in the study.
+
+ - The test statistic is F = 1.3 (given by the ratio of $MS_C$ to $MS_{error}$)
+ - p-value is 0.32 (given by P ($F_{4,12}$ > 1.3)).
+ - The added component of variance in girl's growth attributable to the different periods of measurement is not significantly different from zero (p = 0.32).
+
+Clearly blocking by subject is a critical part of this experiment.  It could be argued that blocking by period does not seem important and that further studies of this nature could forego this. However would still need to give each girl all the different drug treatments (blocking by subject) and in different periods anyway, so it may be just as easy to collect data using design that incorporates blocking by period.

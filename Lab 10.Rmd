@@ -1,0 +1,555 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+if ( ! require('emmeans'))
+  install.packages('emmeans')
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 10 - Week 11
+
+#### Recall Lecture 10:
+
+ - Outliers and Influential Points (Module 9.6)
+ - Variance Inflation Factors (Module 9.8.1)
+ - Multicollinearity
+ - Linear Statistical Models (Module 10)
+ - ANOVA as Regression 
+ - ANCOVA
+
+### Lab Objectives
+
+On completion of this lab you will be able to:
+
+ - apply linear regression models with indicator variables instead of ANOVA
+ - understand the reason for including covariates and using ANCOVA
+ - identify circumstances where ANCOVA is valuable over ANOVA
+
+### Overview
+
+In the Week 10 lecture we covered Outliers and Cook’s Distance, Variance Inflation Factors, Multicollinearity, Linear statistical models, ANOVA as Regression, and ANCOVA.
+
+#### Data Files
+
+```{r echo=FALSE}
+xfun::embed_file("Lab 03 - Fertilizer.sav")
+```  
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 10 - Language.sav")
+```
+
+
+## 10.1 ANOVA as Regression
+
+In an effort to determine whether there was any difference between three types of fertilizer, agricultural researchers subdivided a 30 hectare farm into plots of 2 hectares each. Of these 15 plots, five were treated with fertilizer A, five were treated with fertilizer B, and five were treated with fertilizer C. Wheat was planted on the farm and, at the end of the season, the number of tonnes reaped was measured. The data is available as *Lab 03 - Fertilizer.sav*.
+
+In an earlier lab, we considered this example as a simple Model One-Way ANOVA,
+
+where:
+
+ - $Y$ is the tonnes of wheat reaped per two hectare plot.
+ - $i$ = 1, 2 or 3 indicates the fertiliser types A, B, or C.
+ - $j$ = 1, ..., 5 corresponds to different plots treated with each fertilizer type.
+ - $\mu_i$ is the population mean tonnes of wheat reaped per two hectare plot for plots treated with fertiliser $i$.
+ - $mu$ is the overall population mean tonnes of wheat reaped per two hectare plot, i.e., the average across all 3 fertiliser types. 
+ - $\alpha_i$ is the effect of fertiliser $i$ on the population mean tonnes of wheat reaped per two hectare plot, i.e. the difference between $µ_i$ and $µ$.
+ - $\epsilon_{ij}$ is the error term for the $j$th plot treated with fertiliser $i$. Assumed to be $N(0, \sigma^2)$.
+
+To consider this same example as a special case of regression we can use the model:
+
+  $$ Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \epsilon $$
+
+where the fertilizer factor is encoded using indicator variables $X_1$ and $X_2$ as shown in the table below.
+
+  | Fertilizer Type | $X_1$ | $X_2$ |
+  |-----------------|-------|-------|
+  |     A (i = 1)   |   1   |   0   |
+  |     B (i = 2)   |   0   |   1   |
+  |     C (i = 3)   |  -1   |  -1   |
+
+
+#### 1. Why can these two models be considered equivalent?
+
+##### Solutions
+
+Ⓢ
+
+In each case, the model is of separate mean wheat yields for each fertilizer type, with the variation around that mean represented by a normally distributed error term. This is shown in the table below. We are simply using different symbols and in the regression model we use the variables $X_1$ and $X_2$ to indicate the fertilizer type but the model is exactly the same.
+
+  | Fertilizer Type | $X_1$ | $X_2$ |            ANOVA          |           Regression         |
+  |-----------------|-------|-------|---------------------------|------------------------------|
+  |     A (i = 1)   |   1   |   0   | $(\mu+\alpha_1)+\epsilon$ | $(\beta_0+\beta_1)+\epsilon$ |
+  |     B (i = 2)   |   0   |   1   | $(\mu+\alpha_2)+\epsilon$ | $(\beta_0+\beta_2)+\epsilon$ |
+  |     C (i = 3)   |  -1   |  -1   | $(\mu+\alpha_3)+\epsilon$ | $(\beta_0-\beta_1-\beta_2)+\epsilon$ |
+
+
+#### 2. How many indicator variables would be required if there were four fertilizer types in our experiment? How many indicator variables are required to encode a factor with ‘a’ levels?
+
+##### Solutions
+
+Ⓢ
+
+Three indicator variables would be required to encode four fertilizer types. More generally, $a - 1$ indicator variables are required to encode a factor with $a$ levels.
+
+#### 3. Create two new columns in the SPSS data set. Label them $X_1$ and $X_2$ and encode the fertilizer type information as indicated.
+
+Here we're "Recoding" the `Type` variable. We want to recode the values of `Type` into $X_1$: `A` => `1`, `B` => `0`, and `C` => `-1`. Similarly, we want to recode the values of `Type` into $X_2$: `A` => `0`, `B` => `1`, and `C` => `-1`.
+
+![](R.svg) We can create these new columns, and fit the regression model as follows:
+
+```{r}
+data <- haven::read_sav('Lab 03 - Fertilizer.sav')
+data$Type <- as_factor(data$Type)
+data <- as.data.frame(data)
+
+data$X1 <- NA
+data$X2 <- NA
+
+data$X1[data$Type == 'A'] <-  1
+data$X1[data$Type == 'B'] <-  0
+data$X1[data$Type == 'C'] <- -1
+data$X2[data$Type == 'A'] <-  0
+data$X2[data$Type == 'B'] <-  1
+data$X2[data$Type == 'C'] <- -1
+```
+
+![](v.svg)
+
+In jamovi, add a new 'Transformed variable'; (Data -> Add -> Transformed Variable -> Append), and name it `X1`. Choose the *Source variable* (the one we're recoding) as `Type`, then under *using transform* choose *Create new transform...*. We're now constructing a transform to 'recode' the values of `Type` (A, B, C) into the values `1`, `0`, `-1`. Look for the button *+ Add recode condition*, and add two conditions (click it twice). This gives us two *if statements* and an *else statement*.
+
+In these statements, `$source` refers to the *Source variable* that we chose in the previous screen (`Type`). Enter the statements so it reads:
+
+```
+if $source == 'A'     use 1
+if $source == 'B'     use 0
+if $source == 'C'     use -1
+```
+
+When done, press enter, or click outside the conditions box. Take a look at the contents of the `X1` variable, and check that the values of `Type` have been recoded accordingly.
+
+Repeat the process for the variable `X2`, however it will be recoded slightly differently. Refer to the table above.
+
+#### 4. Fit a regression model explaining wheat yield in terms of $X_1$ and $X_2$.
+
+![](R.svg)
+
+Fit the model using `lm()` function
+
+![](v.svg)
+
+Analyses -> Regression -> Linear Regression. We want `X1` and `X2` to be treated as continuous variables, so we specify them as covariates.
+
+##### Solutions
+
+Ⓢ
+
+```{r}
+model <- lm(Tonnes ~ X1 + X2, data)
+model
+```
+
+  $$ E(Y) = 2.9 + 0.04X_1 + 0.06X_2 $$
+
+#### 4. What are the estimated average wheat yields for 2 ha plots treated with fertilizer types A, B and C?
+
+##### Solutions
+
+Ⓢ
+
+Using this equation and the appropriate values of $X_1$ and $X_2$ that represent fertilizer types A, B and C, we can determine the estimated average wheat yields as shown in the following table:
+
+
+| Fertilizer Type | $X_1$ | $X_2$ | Estimated average wheat yield       |
+|-----------------|-------|-------|-------------------------------------|
+|    A (i = 1)    |   1   |   0   |  2.9 + 0.04 ×  1 + 0.06 ×  0 = 2.94 |
+|    B (i = 2)    |   0   |   1   |  2.9 + 0.04 ×  0 + 0.06 ×  1 = 2.96 |
+|    C (i = 3)    |  -1   |  -1   |  2.9 + 0.04 × −1 + 0.06 × −1 = 2.80 |
+
+#### 5. If we wished to test the null hypothesis that the fertilizer type has no effect on the wheat yield, how can we express this in terms of the regression parameters, $\beta_1$ and $\beta_2$?
+
+##### Solutions
+
+Ⓢ
+
+$H_0 : \beta_1 = \beta_2 = 0$
+
+$H_a :$ at least one of $\beta_1$ or $\beta_2$ is not zero
+
+#### 6. Give the test statistic and p-value corresponding to the test of this null hypothesis.
+
+![](R.svg)
+
+To get the test statistic for the *whole model test*, we need to use the `summary()` function on the model, and then retrieve the F statistic from this. Once we have the F statistic, we can use the `pf()` function to determine the corresponding p-value:
+
+```{r, eval=FALSE}
+# F statistic for whole model
+F <- summary(model)$fstatistic
+F
+
+# p-value for F
+pf(F[1], F[2], F[3], lower.tail=FALSE)
+```
+
+![](v.svg)
+
+Using the Linear regression we created in 4, under the *Model Fit* section, you'll find an option for an *F Test*. This will provide an F-statistic and a p-value in the *Model Fit Measures* table in the results.
+
+##### Solutions
+
+Ⓢ
+
+```{r, echo=FALSE}
+# whole model F test
+F <- summary(model)$fstatistic
+F
+
+# p-value for whole model test
+pf(F[1], F[2], F[3], lower.tail=FALSE)
+```
+
+The test statistic is $F_{2,12}$ = 0.392 and associated p-value is 0.684. 
+
+(NB In this case the test for the effect of the fertilizer type corresponds to the full model test).
+
+#### 7. Fit a linear model using the nominal Fertilizer Type variable directly. Compare the results to that of the regression model. Explain the meaning of the terms in the Parameter Estimates table.
+
+![](R.svg) 
+
+```{r, eval=FALSE}
+model <- lm(Tonnes ~ Type, data)
+model
+```
+
+![](v.svg)
+
+Analyses -> Regression -> Linear Regression. This time, simply specify `Tonnes` as the dependent variable and `Type` as a factor.
+
+##### Solutions
+
+Ⓢ
+
+```{r, echo=FALSE}
+model <- lm(Tonnes ~ Type, data)
+model
+```
+
+###
+
+The underlying message is that ANOVA and regression are just specific examples of a more general type of model.
+
+
+## 10.2 Analysis of Covariance
+
+The effectiveness of three different methods of teaching a foreign language were compared. 30 students were randomly assigned to one of three groups corresponding to the different instruction methods. A language test is given at the end of the instruction period. IQ scores taken before the language instruction are also available. The data are given in the table below and in *Lab 10 - Language.sav*.
+
+![](Lab 10 - Language.png){width=400px}
+
+#### 1. Does the teaching method affect language test scores? Produce a box-plot of language scores, comparing the different groups. Follow this up with a one-way analysis of variance.
+
+##### Solutions
+
+Ⓢ
+
+```{r}
+data <- haven::read_sav('Lab 10 - Language.sav')
+data <- as.data.frame(data)
+data$METHOD <- as.factor(data$METHOD)
+
+plot(LANGUAGE ~ METHOD, data)
+```
+
+The graph above suggests that perhaps students taught using Method 2 performed best and students taught using Method 3 the worst based on average language test scores; however, we need to test for statistical significance of any such differences.
+
+```{r}
+model <- lm(LANGUAGE ~ METHOD, data)
+anova(model)
+```
+
+Using the one-way fixed effects ANOVA we find that we are unable to reject the null hypothesis, at the 5% significance, p-value = 0.109, and conclude that there is insufficient evidence to find a statistically significant difference in population mean language test scores due to teaching method.
+
+#### 2. In the above analysis, IQ score was ignored, and a one-way ANOVA conducted. Is such an approach adequate? Should an ANCOVA instead be considered, having both Language Score and IQ as predictors, or is it unnecessarily complex?
+
+  a. Determine the mean IQ scores, and mean Language scores, for each teaching method? Has random assignment of students to teaching method group ensured equivalent comparison groups in the ANOVA?
+  b. Consider also parallel boxplots of Language Scores by Method. What does this suggest about the ANOVA model?
+  c. Consider and interpret a scatterplot and correlation of Language Score and IQ score.
+  d. What do the above results suggest about the value of considering an ANCOVA model having both Method and IQ score? How might this experiment be affected?
+
+##### Solutions
+
+Ⓢ
+    
+```{r}
+library(jmv)
+jmv::descriptives(
+  formula=LANGUAGE+IQ~METHOD,
+  data=data,
+  n=FALSE, missing=FALSE, median=FALSE, min=FALSE, max=FALSE)
+```
+
+Although the students were randomly allocated, there are potentially some differences between the three groups with respect to mean IQ.
+
+The mean language scores for Methods 1, 2 and 3 respectively are 116, 109 and 107 respectively. Such differences (in types of subjects within each group (Method)) could affect decisions re differences in population mean scores due to Methods (differences in types of subjects could confound the results).
+
+If IQ is an important factor in learning a language we might expect teaching Method 1 to perform better than Method 3 because of the effect of IQ (since mean IQ for Method 1 is larger than mean IQ for Method 2).
+
+Thus IQ may confound the effect of the teaching method. 
+
+This would suggest that ANCOVA may be more useful for analysis.
+
+```{r}
+plot(LANGUAGE ~ METHOD, data)
+```
+
+Boxplots show there is large within-Method variation (large error variation) which will reduce the chances of detecting differences in population mean Language scores due to Method (which was what ANOVA was attempting to test/detect).
+
+```{r}
+plot(IQ ~ METHOD, data)
+```
+
+Boxplot indicates Method may be related to or affected by IQ.
+
+```{r}
+plot(LANGUAGE ~ IQ, data)
+```
+
+The scatterplot suggests a linear association between outcome (Language score) and the covariate (IQ Score).
+
+One-way ANOVA may be inadequate. The study perhaps should have considered blocking on IQ before randomly assigning to the three Teaching Methods (actually addressing Q9).
+
+Boxplots show large within-Method variation – hard to detect differences in population mean Language scores due to Method (part b).
+
+Means indicate differences in mean IQ scores within each of the Teaching Methods – could affect test for differences in population mean Language scores due to Teaching methods (part a).
+
+Scatterplot and statistically sig Correlation (p=0.000, 3 dec pl) indicate a linear association between outcome (Language score) and the covariate (IQ Score) (part c).
+
+Given above, the MSE will reduce by inclusion of covariate, IQ score (IQ score will explain some of the currently unexplained variation), and increase the chances of detecting differences in population mean Language scores (after accounting for covariate) due to Method.
+
+This would suggest that ANCOVA may be more useful for analysis than one-way ANOVA, and not unnecessarily complex.
+    
+#### 3. Consider a linear model for language test score using teaching method AND IQ as explanatory variables. Express this model algebraically, defining all symbols used. (Do not include an interaction term at this stage.)
+
+i.e., write the generic (i.e., do not use the estimated values) algebraic model for the linear relationship involving ‘Language Score’, ‘Method of Teaching and ‘IQ Score’ without an interaction term. Define each symbol in your model.
+
+##### Solutions
+
+Ⓢ
+
+  $$ Y_i = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_3 + \epsilon_i $$
+
+where:
+   
+ - $Y_i$ is language test score for the ith individual, Note: We strictly speaking should have subscripts $i$ for each of the $X_j$ and $\beta_j$, $j$ = 1,2,3; these have been omitted to reduce complexity (look less overwhelming).
+ - $\beta_0$, $\beta_1$, $\beta_2$ regression parameters
+ - $\epsilon_i \sim N(0, \sigma^2)$ error term for ith individual ... our usual normally distributed random error term modelling any unexplained variation
+ - $X_3$ represents `IQ` score
+ - $X_1$ and $X_2$ are indicator variables used to represent the three teaching methods.
+ 
+  | Teaching Method | $X_1$ | $X_2$ |
+  |-----------------|-------|-------|
+  |        1        |   0   |   0   |
+  |        2        |   1   |   0   |
+  |        3        |   0   |   1   |
+
+Comment: This is an alternative form for coding the indicator variables.  Method 1 is zero for both indicators – this means it is the reference category (the intercept now is the population mean for this category) and the coefficient for $X_1$ represents the difference in population means between the reference category and $X_1$ (the coefficient for $X_2$ is similarly defined relative to the reference category).
+
+#### 4. Fit this model. Write the fitted equation for the linear relationship involving Language Score, Teaching Method, and IQ score, without an interaction term. Give a full quantitative description of the fitted model.
+
+It turns out that many statistical softwares can perform the recoding step we performed in section 10.1, automatically.
+
+![](R.svg)
+
+By default, `lm()` will apply the coding we used in 10.1:
+
+  | Teaching Method | $X_1$ | $X_2$ |
+  |-----------------|-------|-------|
+  |        1        |   1   |   0   |
+  |        2        |   0   |   1   |
+  |        3        |  -1   |  -1   |
+
+This is called *simple coding*. However, for this example we'll use *dummy coding*, which is as follows:
+
+  | Teaching Method | $X_1$ | $X_2$ |
+  |-----------------|-------|-------|
+  |        1        |   0   |   0   |
+  |        2        |   1   |   0   |
+  |        3        |   0   |   1   |
+
+Both codings are more-or-less equivalent, however *dummy coding* can be easier to understand.
+
+To specify *dummy coding* when fitting the model we can assign contrasts to the `METHOD` variable as follows:
+
+```{r, eval=FALSE}
+contrasts(data$METHOD) <- contr.treatment(levels(data$METHOD))
+model <- lm(LANGUAGE ~ METHOD + IQ, data)
+model
+```
+
+![](v.svg)
+
+To fit this model in jamovi; Analysis -> Regression -> Linear Regression. Specify `LANGUAGE` as the dependent variable, specify `IQ` as a covariate, and specify `METHOD` as a factor. By specifying `METHOD` as a factor, we instruct jamovi to construct coding variables in the background.
+
+##### Solutions
+
+Ⓢ
+
+```{r}
+contrasts(data$METHOD) <- contr.treatment(3)
+model <- lm(LANGUAGE ~ METHOD + IQ, data)
+model
+```
+
+The equation of the fitted model is:
+
+  $$ E(Y) = 42.104 + 4.908X_1 -2.1607X_2 + 0.315X_3 $$
+  
+Thus for all learning methods, the language test score can be expected to increase by 0.315 on average for every 1 point increase in student IQ score.
+
+The effect of the different learning methods can be thought of as separate Y intercepts for:
+
+Method 1: 42.104 (the reference category)
+
+Method 2: 42.104 + 4.908
+
+Method 3: 42.104 - 2.1607
+
+Essentially the effect of the different learning methods is to shift this linear relationship between language score and IQ up or down. On average, for students with any particular IQ, test scores will on average be 4.908 higher for method 2 compared to method 1 and 2.161 lower for method 3 than method 1.
+
+![](Lab 10 - Language 2.png){width=400px}
+
+#### 5. Does the teaching method affect language test scores? State the relevant null and alternative hypotheses, give the test statistic and associated Test statistic and p-value and provide an appropriate conclusion.
+
+![](R.svg)
+
+You *can* pass the `lm()` model you've created to the `anova()` function to get the appropriate statistic, however, by default `anova()` in R uses *type 1* sums-of-squares, where as most other software uses *type 3* sums-of-squares. To get the results with type 3 sums-of-squares, use the `Anova()` function from the `car` package, and pass it the argument `type=3`. (You don't need to understand the different sums of squares for this course.)
+
+![](v.svg)
+
+Using the Linear Regression you fitting in question 4, under the *Model Coefficients* section you'll find an option for *ANOVA test*.
+
+##### Solutions
+
+Ⓢ
+
+  $H_0: \beta_1 = \beta_2 = 0$
+
+  $H_a :$ At least one of $\beta_1$, $\beta_2$ is not zero.
+  
+```{r}
+library(car)
+Anova(model, type=3)
+```
+
+The test statistic is F = 3.415 and associated p-value is 0.048.
+
+The teaching method has a statistically significant effect on the population mean language test score of students (p = 0.048) when IQ is used as a covariate. (N.B. We could then carry out post-hoc comparison of means. For example, LSD test, at a 5% significance level, shows that teaching methods 2 and 3 result in significantly different average language test scores but teaching method 1 cannot be distinguished from either of the others. See below)
+
+```{r}
+grid <- emmeans::emmeans(model, ~METHOD:IQ)
+pairs(grid, adjust='tukey')
+```
+
+#### 6. In linear models such as these, to what does the *Mean square* of the residuals relate? Explain how the inclusion of the IQ score in the model has affected the mean square of the residuals in this ANCOVA model compared to the mean square of the residuals for the original one-way ANOVA model. How has that affected the analysis of the question of interest, i.e., whether the teaching method affects language test scores?
+
+##### Solutions
+
+Ⓢ
+
+From the output: Mean square of the residuals is 38.4; the sample estimate of the variance, $\sigma^2$ of the error term, $\epsilon$, in the linear model.
+
+For the previous one-way ANOVA model, the Mean square of the residuals is 63.4. Including the IQ score in the model has helped to explain much of the previously unexplained variation in language test scores reducing the error sum of squares and subsequently the mean square error. Thus the F ratio relating to the test of the effect of the teaching method is much larger for the ANCOVA model and we are more likely to declare a statistically significant effect.
+
+This is consistent with the concept we have explored several times throughout this course. The smaller the error variance, the easier it is to detect the effect of a particular explanatory variable.
+
+#### 7. Sometimes we aren't particularly interested in the effect of the covariate. Rather we only include it in the model to reduce the residual variation and increase the chance of detecting an effect we are interested in (i.e., increasing power). Use this analysis to:
+
+  a. state the 95% confidence interval for the parameter relating to the effect of the change in language test score with changes in IQ score;
+  b. Interpret the 95% confidence interval from part a.
+
+![](R.svg) 
+
+```{r}
+confint(model)
+```
+
+![](v.svg)
+
+You'll find the option for *Confidence intervals* under the *Model coefficients* section.
+
+##### Solutions
+
+Ⓢ
+
+From output: (0.165, 0.466)
+
+Or 95% confidence interval for $\beta_3$
+
+  $$ = \beta_3 \pm t \times SE(\beta_3) $$
+ 
+  $$ = 0.315 \pm 2.056 \times 0.0732 $$
+  
+  $$ = 0.315 \pm 0.150 $$
+  
+  $$ = [0.165, 0.465] $$
+
+We are 95% confident that for a unit increase in IQ score, the true population language test score will increase by between 0.165 and 0.465 units, on average, when Method is held constant.
+    
+#### 8. How does inclusion of an interaction term affect the model? Is an interaction term useful in this example?
+
+##### Solutions
+
+Ⓢ
+
+```{r}
+model <- lm(LANGUAGE ~ METHOD * IQ, data)
+model
+```
+
+In this particular example, the interaction term is not statistically significant (p = 0.37) so the previous model would be preferred. To understand the interaction effect however, consider the scatterplot below. As in the previous model, the data is modelled using three lines but including an interaction term allows the lines to have separate slopes.  This is consistent with our definition of interaction. The slope represents the effect of IQ on language test score. If this changes for the different teaching methods then obviously we have a Teaching Method by IQ interaction.
+
+TODO
+
+We can see this in detail looking at the fitted model:
+
+  $$ \hat Y = 26.834 + 33.912X_1 + 15.562X_2 + 0.4471X_3 - 0.258X_1(X_3-110.7) - 0.155X_2(X_3-110.7) $$
+  
+Note the centring of the continuous IQ variable in the interaction term.
+
+Thus for each teaching method, the fitted model is equivalent to the lines in the following table:
+
+  | Method | $X_1$ | $X_2$ | $\hat Y =$ |
+  |--------|-------|-------|------------|
+  |    1   |   0   |   0   | $26.834 + 0.4471X_3$ |
+  |    2   |   1   |   0   | $26.834 + 33.912X_1 + 0.4471X_3 - 0.258X_1(X_3-110.7)$ |
+  |    3   |   0   |   1   | $26.834 + 15.562X_2 + 0.4471X_3 - 0.155X_2(X_3-110.7)$ |
+
+#### 9. Instead of including IQ as a covariate, how could we have designed this experiment in order to address the issue of IQ score potentially confounding the results? What would be the advantages or disadvantages of these two methods?
+
+##### Solutions
+
+Ⓢ
+
+We could order the students by IQ. The top 3 students could then be randomly allocated across the three learning methods, then the next 3, etc until all 30 students are allocated. If we then conduct a one-way ANOVA we should have better matched comparison groups than we achieved just by random allocation.  However, we would not get the reduction in error variance we achieved by including IQ as a covariate. We may get some of this benefit by including the blocks of three students as another variable in a two-way ANOVA.
+

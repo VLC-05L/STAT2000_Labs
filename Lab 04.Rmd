@@ -1,0 +1,590 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+if ( ! require('multcomp'))
+  install.packages('multcomp')
+
+data <- haven::read_sav('Lab 04 - Activity.sav')
+data <- as.data.frame(data)
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 4 - Week 5
+
+#### Recall Lecture 3 and 4:
+
+ - ANOVA Assumptions
+ - Diagnostics 
+ - Remedial Measures  
+ - Comparing Means
+ 
+
+### Lab Objectives
+
+On completion of this lab you will be able to:
+
+ - Identify and test assumptions for an ANOVA.
+ - Identify when multiple comparisons are appropriate.
+ - Perform the appropriate multiple comparisons and interpret the findings.  
+
+ - Identify when transformation of the response variable is appropriate.
+ - Transform the response variable and perform analyses using the transformed response.
+ - Identify when it is appropriate to apply orthogonal contrasts.
+
+
+### Overview
+
+In the Week 4 lecture we discussed the assumptions underlying oneway fixed effects ANOVA, and how we may check or test these (diagnose) and what action we may take to remedy the situation when assumptions don't hold (remedial measures). We also considered the additional testing, for differences between groups, once the ANOVA identifies that at least one population mean differs (post-hoc tests or multiple comparisons).
+
+#### Data Files
+
+```{r echo=FALSE}
+xfun::embed_file("Lab 04 - Activity.sav")
+```
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 04 - Learning.sav")
+```
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 04 - Box_Office_1.csv")
+```
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 04 - Box_Office_2.csv")
+```
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 04 - Box_Office_3.csv")
+```
+
+
+
+## 4.1 Transformation of the Response Variable
+
+The file *Lab 04 - Activity.sav* contains data from a study by Conti and Musty (1984) on the activity levels in rats following administration of different levels of THC, the active ingredient in marijuana. The activity units, based on an arbitrary scale, are reported for each rat over the 10 minute post-injection period.
+
+#### 1. Analyse the data. Ensure you test for equality of variance across treatment groups and whether the residuals are normally distributed. Report conclusions but do not consider multiple comparisons at this stage.
+
+![](R.svg)
+
+Construct a model using the `lm()` function, and then pass this model to the `anova()` function. 
+
+In general, if our data is stored in an object called `data_object` say, that has variable names `response` and `predictor`, the `lm()` function gets used as follows: 
+```{r eval=FALSE}
+lm_1 = lm(response ~ predictor, data = data_object)
+```
+Because the objects `response` and `predictor` do not exist outside of the data frame object, we need to specify where `response` and `predictor` come from using `data = data_object`. We could omit the `data = data_object` command if we entered `response` and `predictor` directly as follows: 
+```{r eval=FALSE}
+lm_1 = lm(data_object$response ~ data_object$predictor)
+```
+The `$` charachter in `data_object$response` says, extract the `response` variable from the `data_object` data frame. You should practice using the `$` operator as well as using both methods for running the linear model. 
+
+*The first method above is preferred though. It makes it easier to perform use the* `leveneTest` *function later. You can simply enter the* `lm_1` *model object into the function*. 
+
+You then need to use the `anova()` function on the linear model object:
+```{r eval=FALSE}
+anova(lm_1)
+```
+
+
+
+![](v.svg)
+
+Analyses → ANOVA → ANOVA. It should be clear which is the dependent variable and which is the explanatory factor. Under the *Assumption Checks* section you'll find options for testing equality of variances and normality.
+
+##### Solutions
+
+ 
+
+```{r}
+library(car)
+
+model <- lm(Y ~ TrmntGrp, data)
+anova(model)
+```
+
+$H_0$: population mean activity levels are equal for the five groups (p < .001), so reject the null and conclude that at least two of the population mean activity levels in the rats differ.
+
+###### Assumptions
+
+Normality
+
+Consider the residuals as a whole. (note that the means of the residuals are always zero in each group, by the definition of the least squares estimates, if the equal variance assumption is correct, then each group’s residuals have the same mean and variance, so combining them to assess the shape of their distribution makes sense)
+
+$H_0$: residuals come from a normal distribution
+
+```{r}
+resids <- residuals(model)
+shapiro.test(resids)
+```
+
+Fail to reject null since p=0.844 and conclude the residuals are consistent with coming from a normal distribution
+
+```{r}
+qqPlot(resids)
+```
+
+Equality of variances
+
+```{r}
+leveneTest(model)
+```
+
+$H_0$: population variances are equal for all five groups
+
+Rule of thumb violated (half highest std dev 153 > twice lowest std dev 58)
+
+p = 0.023 from formal test, hence reject null at 5% significance level and hence conclude that the population variances are not equal for all five groups
+
+#### 2. Graph the residuals against the predicted values. What does your residual by predicted plot show? Explain why this is relevant to your original ANOVA analysis.
+
+![](R.svg)
+
+You can use the following code
+
+```{r eval=FALSE}
+model <- lm(Y ~ TrmntGrp, data)
+resids <- residuals(model)
+preds  <- predict(model)
+plot(preds, resids)
+```
+  
+![](v.svg)
+
+There's no easy way to perform this in jamovi, but you can paste the preceding R code in the Rj Editor.
+
+##### Solutions
+
+ 
+
+```{r echo=FALSE}
+model <- lm(Y ~ TrmntGrp, data)
+resids <- residuals(model)
+preds  <- predict(model)
+plot(preds, resids)
+```
+
+There is a fairly clear pattern in the residual by predicted plot; the variation seems to increase as the predicted Y values increase indicating the assumption of equality between the variances of the five groups is violated. This is not an uncommon pattern but is clearly not consistent with the ANOVA model which requires constant variance for all groups (and therefore at all values of the response). Recall in the first question we confirmed, by formally testing, that the assumption of equal population variances was suspect.
+
+A transformation of the response variable can often be useful in such cases. Considering the pattern in the residuals is help in determining which transformation to use.
+ 
+#### 3. Consider observation 33 in the data set; Y = 376 is the response variable value for this observation in the 0.5 $\mu g$ dosage group. Explain how the residual and predicted values have been calculated for this observation and describe these values more generally, for any observation.
+
+##### Solutions
+
+ 
+
+The one-way ANOVA model allows for normally distributed errors around a group mean. The value predicted by the model for a given/observed data value is simply the sample mean of the group from which the observation arose (the estimate of its group mean). For the 0.5 $\mu g$ dosage group the sample mean is 390.56; hence this is the corresponding predicted value for the observed value of 376. In fact 390.56 is the predicted value for all the observed data coming from this particular group.
+
+The corresponding residual is the difference between the observed and predicted values:
+
+$$ 376 - 390.56 = -14.56 $$
+    
+#### 4. Transform the data to overcome the issue of non-constant variance
+
+Transformation of the response variable can be a useful remedial measure when assumptions of equal variance and/or normally distributed residuals are not met. The logarithmic transformation, either to the base 10 or base e (natural logarithms), is commonly used when residuals are right skewed or the standard deviation is proportional to the mean.
+
+![](R.svg)
+
+Create a new variable called `LogY` which is the log transformed version of `Y`, and create a new linear model using this variable (`LogY ~ TrmntGrp`). Then run the same set of analyses you ran for question 1.
+
+```{r eval=FALSE}
+data$LogY <- log(data$Y)
+```
+
+![](v.svg)
+
+Create a new computed variable called `LogY` which is the log transformed version of `Y`. Data → Add → Append Computed Variable. This creates a 'Computed variable' which we can specify a formula for. Specify a new name for the variable (for example `Log Y`), and then specify the formula `LOG(Y)` and press enter. The variable should now be filled with the log of the value from column *Y*.
+
+(Note: It turns out computed variables can do a lot more than just a log transform; if you click the small fx button you can get a full list of all the functions available).
+
+#### 5. Run the ANOVA using Log(Y) as the response instead of Y. How does this new model compare to your previous ANOVA analysis? Are the assumptions met for this model?
+
+```{r eval=FALSE}
+logModel <- lm(LogY ~ TrmntGrp, data)
+anova(logModel)
+
+logResids <- residuals(logModel)
+shapiro.test(logResids)
+qqPlot(logResids)
+leveneTest(logModel)
+```
+  
+##### Solutions
+
+ 
+
+```{r echo=FALSE}
+data$LogY <- log(data$Y)
+logModel <- lm(LogY ~ TrmntGrp, data)
+anova(logModel)
+```
+
+$H_0$: population mean activity levels are equal for the five groups (p < .001), so reject the null and conclude that at least two of the population mean of the log of activity levels in the rats differ.
+
+The new model still indicates that the THC dosage has a statistically significant effect (p < .001) but it is important to understand that in this case our conclusion is that there are differences in the population mean of the logarithm of the activity measurement, NOT in the mean of the raw activity measurement.
+
+Transforming the response variable impacts upon our interpretations. We are able to reverse the transformation when reporting final figures
+
+###### Assumptions
+
+Normality
+
+$H_0$: data come from a normal distribution
+
+```{r echo=FALSE}
+logResids <- residuals(logModel)
+shapiro.test(logResids)
+qqPlot(logResids)
+```
+
+Fail to reject null at 5% sig level since p = 0.059 and conclude the data are consistent with coming from a normal distribution.
+
+It seems the transformation may have made the situation worse with respect the assumption about a normally distributed error term, but not to the point of rejecting at the 5% sig level.
+
+Equality of population variances
+
+$H_0$: population variances are equal for all five groups
+
+```{r echo=FALSE}
+leveneTest(logModel)
+```
+
+Rule of thumb violated (highest std dev .326 < twice lowest std dev .207)
+p = 0.204 from formal test, hence fail to reject null at 5% significance level and hence conclude that the population variances of the log of activity levels are not statistically significantly different from one another.
+
+#### 6. Consider the Residual by Predicted Plot. How does this compare to the Residual by Predicted Plot obtained in the original analysis?
+
+```{r}
+logResids <- residuals(logModel)
+logPreds  <- predict(logModel)
+plot(logPreds, logResids)
+```
+
+##### Solutions
+
+ 
+
+The Residual by Predicted Plot in the output using the transformed data shows a more constant spread of the residuals for each of the groups compared with the corresponding plot for the original data (without consider the transformation). This supports the results we obtained from the formal test and indicates that the logarithmic transformation has been successful in changing the response variable into a form that satisfies the equality of variance assumption for ANOVA.
+
+#### 7. Suppose the researchers decided that post-hoc multiple comparisons were appropriate. Comment on why they would use this methodology over planned comparisons. What would be the advantage of using planned comparisons?
+
+##### Solutions
+
+ 
+
+The researcher must not have had in mind planned comparisons before collecting the data or undertaking the analysis. They therefore can only undertake unplanned comparisons. The advantage of using planned comparisons is that you are likely to make less comparisons, and can then spread your overall type 1 error risk over less comparisons, giving you a greater ability to identify a difference. In addition to this we can perform comparisons on combinations of treatment groups.
+
+#### 8. Whenever possible it is preferable to perform an analysis using the original (not transformed) units. 
+
+ 1. Return to the original data and perform a multiple comparison. 
+ 2. Use the transformed data to perform a multiple comparison
+ 3. Comment on the findings.
+
+![](R.svg)
+
+Multiple comparisons (with a Tukey correction) can be performed in R using the `TukeyHSD` function. Note that it's necessary to convert the `lm()` object to an `aov()` object before passing it to `TukeyHSD()`.
+
+```{r eval=FALSE}
+aovObject <- aov(model)
+TukeyHSD(aovObject)
+```
+
+![](v.svg)
+
+You'll find the option to perform post-hoc tests for the different levels of `TrmntGrp` variable under the *Post Hoc Tests* section of the ANOVA.
+
+##### Solutions
+
+ 
+
+```{r}
+aovObject <- aov(model)
+TukeyHSD(aovObject)
+
+logAovObject <- aov(logModel)
+TukeyHSD(logAovObject)
+```
+
+Transforming the response variable probably doesn't make a lot of difference in this case if we are just trying to demonstrate that the THC dosage has an effect on the activity levels of the rats. However there are some differences in multiple comparisons and in confidence interval estimates of the differences in group means in this case.
+
+#### 9. Summarise your findings
+
+##### Solutions
+
+ 
+
+A logarithmic transformation of the activity scores was trialled because the raw activity scores suggested unequal variances across the comparison groups, violating of one of the fundamental ANOVA assumptions. This transformation was successful in eliminating the unequal variance problem but residual analysis for the transformed data suggested a possible problem with the assumption of normally distributed data (p = 0.059 for Shapiro-Wilk test). Other transformations should be assessed as they may provide an improved model. For the log transformed data however, the level of THC administered does have a statistically significant effect on the mean of the log of activity scores (p = 0.0002).
+
+It identified that the small doses of THC (0.1, 0.5 and 1 $\mu g$) seem to do more to increase activity compared to the control than the larger doses (2 $\mu g$). Using Dunnett’s test at a 5% significance level, the means of the log of activity scores were significantly different for the control group and each of the 0.1, 0.5, and 1 $\mu g$ groups. The 2$\mu g$ group was not significantly different from the control.
+
+
+## 4.2 Orthogonal Contrasts
+
+The table below shows a measure that is indicative of animal learning behaviour. This learning behaviour score is recorded for animals subject to 5 different experimental treatments. 
+
+  | Ad lib (1) | Two per day (2) | Food deprived (3) | Water deprived (4) | Food and water deprived (5) |
+  |------------|-----------------|-------------------|--------------------|-----------------------------|
+  |   18       | 20              | 34                | 31                 | 12                          |
+  |   20       | 25              | 29                | 25                 | 11                          |
+  |   21       | 23              | 25                | 27                 | 8                           |
+  |   16       | 27              | 31                | 29                 | 13                          |
+  |   15       | 25              | 29                | 28                 | 11                          |
+
+Treatments 1 and 2 represent control conditions in which the animal received ad libitum food and water (1) or else food and water twice per day (2). (Ad libitum is Latin for "at one's pleasure". In this context it means that the animal is given free access to food and water allowing the animal to eat/drink as it wants.) In treatment 3 the animals are food-deprived; in treatment 4 they are water-deprived; and in treatment 5 they are deprived of both food and water. The response variable is the number of trials taken for the animal to reach a predetermined learning benchmark-smaller number represents quicker learning.
+ 
+Before running this experiment, the researchers decided it would be appropriate to compare combined control groups (treatments 1 and 2) with combined experimental groups, the control groups with each other, the singly-deprived treatments with the doubly- deprived treatment and the singly-deprived treatments with each other.
+
+#### 1. 	Define the contrasts which correspond to each of these comparisons:  
+
+1. (1+2) v (3+4+5)
+2. 1 v 2
+3. (3+4) v 5
+4. 3 v 4
+
+
+##### Solutions
+
+The coefficients for each contrast are as follows:  
+
+- $\psi_1$:  1/2, 1/2, -1/3, -1/3, -1/3.  
+- $\psi_2$:  1/2, -1/2, 0, 0, 0.  
+- $\psi_3$:  0, 0, 1/2, 1/2, -1.  
+- $\psi_4$:  0, 0, 1, -1, 0.  
+
+
+#### 2. 	Demonstrate that these four comparisons make up a set of mutually orthogonal contrasts.
+
+
+##### Solutions
+
+To demonstrate that these 4 comparisons make up a set of mutually orthogonal contrasts we need to show that each possible pair of contrasts is orthogonal. For example, consider contrasts $\psi_1$ and $\psi_2$. The sum of the product of their constants is:
+$$\begin{align} \sum_{i=1}^{5} c_{i1}c_{i2} & = \frac{1}{2} \times 1 + \frac{1}{2} \times (-1) + \frac{-1}{3} \times 0 + \frac{-1}{3} \times 0 + \frac{-1}{3} \times 0 \\ & = \frac{1}{2} - \frac{1}{2} \\ & = 0 \end{align}$$
+
+Therefore $\psi_1$ and $\psi_2$ are orthogonal. Using the same process we can show that $\psi_1$ and $\psi_3$,
+$\psi_1$ and $\psi_4$, $\psi_2$ and $\psi_3$, $\psi_2$ and $\psi_4$, and $\psi_3$ and $\psi_4$ are also orthogonal pairs. 
+
+```{r eval=FALSE}
+c1 = c(0.5,  0.5, -1/3, -1/3, -1/3)
+c2 = c(0.5, -0.5,  0.0,  0.0,  0.0)
+c3 = c(0.0,  0.0,  0.5,  0.5, -1.0)
+c4 = c(0.0,  0.0,  1.0, -1.0,  0.0)
+
+sum(c1*c2)
+sum(c1*c3)
+sum(c1*c4)
+sum(c2*c3)
+sum(c2*c4)
+sum(c3*c4)
+```
+
+Thus all four contrasts are mutually orthogonal.
+
+
+#### 3. 	Fit a one-way fixed effects ANOVA model to this data and enter the four contrasts which we wish to test.
+
+We wish to test the following for each of the four contrasts:
+$$ H_0: \psi_j = 0 \\ H_A: \psi_j \neq 0. $$
+
+![](R.svg)
+
+The data is available in the file *Lab 04 - Learning.sav*. After reading the data, its important to check if the categorical variable is set as a factor. If not we need to set it to be a factor. 
+
+```{r include=TRUE}
+data <- haven::read_sav('Lab 04 - Learning.sav')
+data <- as.data.frame(data)
+
+is.factor(data$Trtmnt_Grp)
+
+data$Trtmnt_Grp = as.factor(data$Trtmnt_Grp)
+```
+
+In the following we set the first contrast, add it to a matrix with columns representing each contrast and then run the model. 
+```{r include=TRUE, eval=FALSE}
+c1 = c(0.5,  0.5, -1/3, -1/3, -1/3)
+
+mat = cbind(c1)
+
+summary(lm(Trials ~ Trtmnt_Grp, data=data, contrasts=list(Trtmnt_Grp = mat)))
+```
+
+
+![](v.svg)
+
+There's no easy way to perform this in jamovi, but you can paste the preceding R code in the Rj Editor. Jamovi does have several common contrast options that are able to be selected from the dropdown menu at ANOVA → Contrasts. The output indicates what is being compared for each option. You may need to set the reference category to get the contrasts you need here by editing the variable settings. 
+
+
+ 
+##### Solutions 
+
+
+```{r include=TRUE}
+data <- haven::read_sav('Lab 04 - Learning.sav')
+data <- as.data.frame(data)
+
+data$Trtmnt_Grp = as.factor(data$Trtmnt_Grp)
+
+c1 = c(0.5,  0.5, -1/3, -1/3, -1/3)
+c2 = c(0.5, -0.5,  0.0,  0.0,  0.0)
+c3 = c(0.0,  0.0,  0.5,  0.5, -1.0)
+c4 = c(0.0,  0.0,  1.0, -1.0,  0.0)
+
+mat = cbind(c1, c2, c3, c4)
+
+summary(lm(Trials ~ Trtmnt_Grp, data=data, contrasts=list(Trtmnt_Grp = mat)))
+```
+
+
+ 
+ 
+#### 4. 	Write an appropriate concluding statement for each planned comparison.
+
+##### Solutions
+
+$H_0: \frac{\mu_1 + \mu_2}{2} = \frac{\mu_3 + \mu_4 + \mu_5}{3}, H_A: \frac{\mu_1 + \mu_2}{2} \neq \frac{\mu_3 + \mu_4 + \mu_5}{3}$ → $H_0: \psi_1 = 0, H_A: \psi_1 \neq 0$: The population mean number of trials taken by animals in the two control groups combined is on average is statistically significantly larger than the population mean number of trails taken by animals in the three experimental groups combined (p = 5.84e-10). This suggests that on average food and or water deprivation on average improved animal behavior.  
+
+$H_0: \mu_1 = \mu_2, H_A: \mu_1 \neq \mu_2$ → $H_0: \psi_2 = 0, H_A: \psi_2 \neq 0$: The population mean number of trials taken by animals in the ad lib control group is statistically significantly smaller than the population mean number of trails taken by animals in the control group where animals were fed food and water twice a day (p = 0.001). 
+
+$H_0: \frac{\mu_3 + \mu_4}{2} = \mu_5, H_A: \frac{\mu_3 + \mu_4}{2} \neq \mu_5$ → $H_0: \psi_3 = 0, H_A: \psi_3 \neq 0$: There is no statistically significant difference between the population mean number of trials taken on average by animals in the combined groups deprived of food and water  compared to the population mean number of trials taken in the group where animals are deprived of both food and water (p = 0.449).
+
+$H_0: \mu_3 = \mu_4, H_A: \mu_3 \neq \mu_4$ → $H_0: \psi_4 = 0, H_A: \psi_4 \neq 0$: The population mean number of trials taken by animals in the food deprived group is statistically significantly smaller than the population mean number of trials taken by animals in the water deprived group (p = 0.015), suggesting food deprivation has improved animal behaviour compared to water deprivation.   
+
+
+#### 5. 	Why is it important to differentiate between planned and unplanned comparisons?
+
+##### Solutions
+
+Where specific questions cannot be formulated in advance of the analysis, or where we wish to make more comparisons than can be expressed within a set of orthogonal contrasts, we need to use one of the post-hoc methods for means comparison. These methods should only be used after rejecting the general ANOVA $H_0$ of equal means.  
+
+An unplanned comparison such as Tukey’s test relies on the ANOVA F-test firstly identifying a difference; and involves all comparisons and thus uses an overall Type I error rate split amongst many more comparisons.
+
+For planned comparisons, specific questions regarding comparisons among the means are posed *before* the data are collected. Tests are then performed on select comparisons. Expressing a selected group of comparisons in the form of contrasts and testing the corresponding hypotheses is more powerful (more likely to detect a difference if one exists).
+
+*The usual check of the ANOVA assumptions should still be carried out.* Not asked for but are included here. 
+
+```{r include=TRUE, echo=F}
+model = (lm(Trials ~ Trtmnt_Grp, data=data, contrasts=list(Trtmnt_Grp = mat)))
+shapiro.test(residuals(model))
+leveneTest(Trials ~ Trtmnt_Grp, data=data, center="mean")
+```
+
+
+## 4.3 Polynomial Contrasts
+
+In the lecture I presented an R script that generated some data. This data was for film box office takings in millions of dollars predicted by the ordinal variable film rating in stars from one to five. 
+
+#### 1. Load the *Lab 04 - Box_Office_1.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. Also formally test for a statistically significant polynomial contrasts at the 5% significance level.
+
+![](R.svg)
+
+For R users, this file type is different to the .sav SPSS files we have already seen. The commands for loading the data are quite similar though. 
+
+```
+data = read.csv(file = "Lab 04 - Box_Office_1.csv")
+data$film_ratings = ordered(dat$film_ratings)
+```
+The film ratings are numeric. We need to also tell R that the variable is a factor, and ordinal. This is done with   `ordered()`. 
+
+We then create the linear model using the conrasts command and using the `contr.poly()` function to automatically determine the contrasts. The 5 is for how many levels the ordinal variable has. 
+```
+lm_contrast = lm(box_office~film_ratings, data=data, contrasts=list(film_ratings = contr.poly(5)))
+summary(lm_contrast)
+```
+
+![](v.svg)
+
+In Jamovi, go to ANOVA → ANOVA → Contrasts → Polynomial. 
+
+
+##### Solutions
+
+```{r include=TRUE, echo=F}
+data = read.csv('Lab 04 - Box_Office_1.csv')
+data$film_ratings = ordered(data$film_ratings)
+
+boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")
+
+lm_contrast = lm(box_office~film_ratings, data=data, contrasts=list(film_ratings = contr.poly(5)))
+summary(lm_contrast)
+```
+
+Looking at the boxplots there appears to be a positive relationship that is non-linear. As the rating increases the box ofice taking appears to increase at an increasing rate, indicating a potential quadratic relationship. There is no down and back up shape indicating that there is a linear component as well. 
+
+At the 5% significance level we would only find a linear relationship in the ordinal variable. 
+
+
+#### 2. The box plots you created in question 1 should have shown a quadratic relationship. There are two possible reasons why you were not able to identify it at the 5% significance level? What are they? 
+
+
+##### Solutions
+
+Either the quadratic relationship does not exist, and therefore not identifying it was the correct thing to do, that is no error. Or there actually was a quadratic relationship, and we did not find it, that is we *incorrectly didn't reject*. This is a type II error. To avoid type II errors we need *POWER*. Given that the sample size is quite small, this indicates that we may have low power.  
+
+In fact, the data is actually simulated from a model that uses a quadratic function. This means that here we know the truth, and that is the population is a quadratic relationship. We did not identify this, therefore we made a type II error. 
+
+#### 3. Load the *Lab 04 - Box_Office_2.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. What sort of relationship would you expect to see identified in a formal test and would you expect the parameter estimates to be positive or negative?  
+
+##### Solutions
+
+```{r include=TRUE, echo=F}
+data = read.csv('Lab 04 - Box_Office_2.csv')
+data$film_ratings = ordered(data$film_ratings)
+
+boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")
+```
+
+The side-by-side box plots start low and then moving to the right increase and then start to decrease. This indicates a negative quadratic relationship, meaning the parameter estimate should be negative. Given that it looks roughly symetric, there is unlikely to be a significant linear contrast.  
+
+
+#### 4. Formally test for a statistically significant polynomial contrasts at the 5% significance level. Check to see if the significant contrasts have the parameter estimates you expected.   
+
+##### Solutions
+
+```{r include=TRUE, echo=F}
+lm_contrast = lm(box_office~film_ratings, data=data, contrasts=list(film_ratings = contr.poly(5)))
+summary(lm_contrast)
+```
+
+There is a statistically significant negative quadratic relationship at the 5% significance level. As expected there is no significant linear relationship. 
+
+
+#### 5. Load the *Lab 04 - Box_Office_3.csv* data set. This is data comes from the same model that was used to create the data in question 1, however this data set is much larger. Are you now able to identify a statistically significant quadratic relatiosnhip?  
+
+##### Solutions
+
+```{r include=TRUE, echo=F}
+data = read.csv('Lab 04 - Box_Office_3.csv')
+data$film_ratings = ordered(data$film_ratings)
+
+boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")
+
+lm_contrast = lm(box_office~film_ratings, data=data, contrasts=list(film_ratings = contr.poly(5)))
+summary(lm_contrast)
+```
+
+The same sort of shape now exists in the box plots, however now we are able to identify a linear and quadratic relationship. This is because now the total sample size is 500, meaning we have much more *POWER* to identify the relationship. 
+
+

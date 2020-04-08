@@ -1,0 +1,538 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('jmv'))
+  install.packages('jmv')
+
+data <- haven::read_sav('Lab 01 - swimmers.sav')
+data <- as.data.frame(data)
+
+xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
+
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 1 - Week 2
+
+#### Recall Lecture 1:
+
+- Revision
+    - Parameters vs Statistics
+    - Sampling distributions
+    - Hypothesis Testing
+- Type I and II Errors
+- Statistical Power for Tests
+- Confidence Intervals
+
+### Lab Objectives
+
+#### On completion of this lab you will be able to:
+
+  - explain the concept of sampling distributions, and the Central Limit Theorem;
+  - use statistical software to obtain confidence intervals and perform hypothesis tests;
+  - interpret the statistical output in context and report upon findings.
+
+#### Overview
+
+This session reviews some concepts you should be familiar with from STAT1070 or STAT2010. If you have difficulties understanding these concepts you should review your notes from those courses. The course notes for STAT1070 are available on Blackboard. Please consider attending any of the help sessions, available from Week 2, if you would like some additional assistance at any time.
+
+#### Data Files
+
+```{r echo=FALSE}
+# a single file
+xfun::embed_file("Lab 01 - swimmers.sav")
+
+# multiple files
+#xfun::embed_files(c('source.Rmd', 'data.csv'))
+
+# a directory
+#xfun::embed_dir('data/', text = 'Download full data')
+```
+
+After downloading the data file, to use it, do the following: 
+
+![](R.svg)
+
+Either move the data file into your working directory, or set the working directory to where the data file is stored. Then use the follwing: 
+
+```
+install.packages("haven") # This installs the package to open SPSS files
+library("haven") # This loads the package
+
+data <- haven::read_sav('Lab 01 - swimmers.sav') # Reads the data
+data <- as.data.frame(data) # Converts it to a data frame. 
+
+```
+
+![](v.svg)
+
+Main menu → Open → Browse → Find the location of the data file and select it. 
+
+Ensure you ask for help if you get stuck opening the data file. It can be tricky the first time you try it, particularly in R. 
+
+
+## 1.1 Revision
+
+### 1.1.1 Data Analysis
+
+Seventy-one swimmers finished the first day's qualifying heats in the men's 100m freestyle event at the 2000 Olympics in Sydney. The data file *Lab 01 - swimmers.sav* contains the times in seconds. This file is available for download above and on Blackboard. 
+
+#### 1. Describe the distribution of these times: use a histogram to visualise the data.
+
+The variable of interest here is *TimeInSecs*.
+
+![](R.svg)
+
+Use the `hist()` function. The first argument needs to be a vector of the data we want to visualise, in this case it will be `data$TimeInSecs`. The bin size of the histogram can be adjusted with the breaks argument, i.e. `hist(..., breaks=10)`.
+  
+![](v.svg)
+
+Analyses → Explore → Descriptives. Under the *Plots* section you'll find the option for a histogram.
+
+##### Solutions
+
+Ⓢ 
+
+When describing a distribution think "Three Ss": shape, centre and spread. Also think of them in that order as the shape drives your choice of measures of centre and spread. The "Three S’s" are simple descriptions used as part of analysing data.
+
+```{r}
+hist(data$TimeInSecs, breaks=10, main='Finishing time in seconds')
+```
+
+ - **Shape**: skewed to the right (tail is at the right), with an outlier (of 112.7 seconds); however, even without this value the times are still skewed to the right (positively skewed).
+ - **Centre**: the median time was 51.3 seconds (median used due to skewness), the mean was 52.6 seconds (this reduces to 51.8 if we excluded the outlier from the analysis)
+ - **Spread**: IQR is 2.6 seconds (IQR used due to skewness), range is 64.1 seconds (min. 48.6 to max.112.7 seconds), range reduces to 13.9 seconds (max. 62.5) if outlier is excluded.
+    
+A paragraph describing the distribution should include the above summary statistics covering the ‘Three Ss’.
+
+NOTE: The above has not simply excluded the outlier value from the description; it has highlighted it and noted its effects. Outliers should be checked for possibly being a data entry error, recording error or a valid value which may provide further insight into the potential values to be observed.
+
+### 1.1.2 Sampling Distributions
+
+Discuss in small groups and answer the following:
+
+#### 1. How might you explain the concept of a sampling distribution, for any statistic?
+
+##### Solutions
+
+Ⓢ A sampling distribution refers to the distribution of all possible values of a statistic for a given sample size. This applies to any statistic (mean, proportion, etc).
+
+#### 2. How might you explain the sampling distribution of the mean, and how it is constructed?
+
+##### Solutions
+
+Ⓢ You could take all possible random samples (each of fixed size n) from a population and calculate the mean for each sample. Say that there were k such random samples (and thus k possible sample means). The distribution of these k sample means is the sampling distribution of the mean, for the fixed sample size, n.
+
+We know that the distribution will have a certain shape, a measure(s) of centre (location) and a measure(s) of spread (variation). From statistical theory, the standard deviation of the sampling distribution of sample means is $\sigma \over \sqrt n$ (called the standard error of the mean).
+
+#### 3. Explain the Central Limit Theorem in reference to sample means from the perspective of Shape, Centre and Spread. 
+
+##### Solutions
+
+Ⓢ The central limit theorem in terms of the sample mean, standard deviation and sample size:
+
+ - The mean of the sampling distribution of the (sample) mean will be the same as the mean of the original population from which the samples are taken.
+ 
+ - The standard deviation of the sampling distribution of the means (which is actually termed the ‘standard error’ of the mean) will be related to the original population standard deviation, $\sigma$, by a factor of $1 \over \sqrt n$ where n is the sample size (i.e., the standard error of the mean is $\sigma \over \sqrt n$.) The standard deviation of your sampling distribution should be quite close to that predicted by statistical theory.
+ 
+      NOTE: The standard deviation should decrease (approaching population standard deviation divided by square root of the sample size). Any difference is just due to sampling variation. If you continue to sample then the sampling distribution (and therefore the standard deviation) should get closer and closer to that predicted by theory.
+
+ - The shape of the sampling distribution of mean will be normal if the original population is normal. If the original population is **NOT** normal, the sampling distribution of sample means will still be **APPROXIMATELY** normal. The closer the original population is to normal and the bigger the sample size, the better this approximation will be.
+As the sample size, n, increases, the sampling distribution approaches normality (shape approaches normal), the standard deviation decreases by  (variance decreases), and the mean of means approaches mean of original distribution (i.e., centres are the same).
+
+#### 4. To help with the above, and to visually consider the Central Limit Theorem, select the link ‘Central Limit Theorem’ from the table of course materials within Blackboard. Consider first for the parent population being Uniform for n=2 (you need to select these from respective pop-up menus), and then repeat for n=5.
+
+##### Solutions
+
+Ⓢ Concepts covered above.
+
+### 1.1.3 Confidence intervals
+
+####
+
+In data analysis, we usually know very little about the population. We use a sample of data from a population to infer information about the population.
+
+For example, the sample mean, $\bar{Y}$, is a point estimate for the population mean, µ.
+
+i.e., the sample mean is one number which estimates (and thus helps us infer information about) the population mean.
+
+Similarly, we can obtain the interval estimate for the population mean, µ, based upon the sample mean, $\bar{Y}$, and standard deviation, $s$. A C% confidence interval for $µ$ (where C% represents the confidence level) is obtained via:
+
+$$ \bar{Y} ± t \times SE(\bar{Y}) $$
+
+and
+
+$$ \bar{Y} ± t \times { s \over \sqrt n } $$
+
+where n is the sample size and $t$ is a value based on the t-distribution (with n-1 degrees of freedom) such that
+
+$$P(-t < t_{n-1} < t) = C\%$$
+
+This follows the general form of a confidence interval:
+
+$$ point \space estimate ± multiplier \times standard \space error \space (of \space point \space estimate) $$
+
+#### 1. Explain how the confidence interval calculation relates to the sampling distribution of the mean.
+
+##### Solutions
+
+Ⓢ The sample mean is distributed around the true population mean, so it is reasonable to use the sample mean as a point estimate (a single value) of the true but unknown population mean. However, we also need to consider the sampling variability (the spread of the sampling distribution). The margin of error, $t \times { s \over \sqrt n}$, is how far the confidence interval needs to extend to be C% confident that the interval will contain the true population mean; where $t$ is the value that symmetrically cuts off ${ { 100 – C } \over 2 } \%$ for a C% level of confidence.
+
+#### 2. A nutrition laboratory tests 25 reduced-salt hot dogs, finding that the mean sodium content is 310 mg, with a standard deviation of 36 mg.
+
+ a. What assumptions are made when employing a confidence interval for the population mean sodium content?
+ 
+ b. Calculate a 95% confidence interval for the population mean sodium content of this brand of hot dog. 
+ 
+ c. Give a clear concluding statement of this result suitable for inclusion in a report summarising the tests.
+ 
+##### Solutions
+
+Ⓢ Let $Y$ represent the sodium content measurement for these “reduced salt" hot dogs. In this example we have taken a sample of size n = 25 hot dogs and measured $\bar{Y}$ for each one. The sample mean and standard deviation are $\bar{Y}$ = 310mg and $s$ = 36mg.
+
+ a. Assumptions:
+ 
+     - The 25 hot dogs were randomly sampled from the population of hot dogs of this brand.
+     - The sampling distribution of sample mean hot dog sodium measurements is normally distributed. (This is exactly true if the original population of sodium measurements is normally distributed, and can be reasonably taken as at least approximately true in this case because of the effect of the central limit theorem. We have quite a reasonable sample size, n = 25. Unless the original population was very strongly skewed the sampling distribution of sample means should be approximately normally distributed.)
+     
+ b. For 95% confidence, the $t$ value, determined from the t-distribution with (n – 1) = 24 degrees of freedom (df), is 2.064. Therefore, the 95% confidence interval for the population mean, µ, is:
+ 
+$$ \bar{Y} ± t \times { s \over \sqrt n } $$
+
+$$ 310 ± 2.064 { 36 \over \sqrt {25}  } $$
+
+$$ 310 ± 14.9 $$
+$$ (295.1, 324.9) $$
+
+ c. We are 95% confident that the true population mean sodium content for this brand of reduced salt hot dogs is between 295.1mg and 324.9mg, based on the testing procedures undertaken.
+ 
+### 1.1.4 Hypothesis Testing: two sample $t$ test
+
+This is still revision of STAT1070 material – see also Module 1 of the STAT2000 notes.
+
+####
+
+Two different brands of vanilla yoghurt were tested for their food energy content. The results are shown in Table 1.1. The research question originally posed was: Is there a difference in food energy content between the two brands?
+
+Table 1.1: Food energy (kJ per 200g serving) for two brands of vanilla yoghurt.
+
+  | Brand A | Brand B |
+  | ------- | ------- |
+  |   672   |   546   |
+  |   840   |   714   |
+  |   924   |   798   |
+  |   966   |   336   |
+  |   504   |   504   |
+  |   756   |   420   |
+  |   588   |   714   |
+
+#### 1. State the null and alternative hypotheses.
+
+##### Solutions
+
+Let $µ_A$ and $µ_B$ be the population means of the food energy measurements (kJ per 200g serving) for Brand A and Brand B vanilla yoghurt respectively.
+The null hypothesis, and alternative hypothesis are
+
+$$ H_0: µ_A = µ_B $$
+$$ H_a: µ_A ≠ µ_B $$
+
+#### 2. Explain the difference between one-tailed and two-tailed tests.
+
+##### Solutions
+
+Two-tailed tests are employed when we are interested in whether any difference exists between two means (not that one is particularly greater than the other); whereas a one-tailed test is employed when we wish to test if one population is greater/better than another.
+
+In other words, for a two-tailed test regarding population means µA and µB we want to reject the null hypothesis if we have sufficient evidence that either $µ_A < µ_B$ or that $µ_A > µ_B$.
+
+In a one-sided test we are only interested in one of these alternatives. (Note: A two-sided test should be the default choice. We only go to a one-sided test if there is some specific reason why we are only interested in a difference in one direction).
+
+#### 3. Is this a one-tailed or a two-tailed test and why?
+
+##### Solutions
+
+This is a two-sided test. Our research question is about detecting *any* difference in mean food energy content between the two brands, not a difference in a particular direction (i.e., not testing whether one is specifically greater than the other).
+
+#### 4. Create a suitable data set and analyse the data.
+
+Hint: Don't enter the data as you see it in the data set above! It needs to be in the following form (except that your data set will contain 14 rows):
+
+  | Brand | Energy |
+  | ----- | ------ |
+  |   A   |   672  |
+  |   A   |   840  |
+  |   A   |   924  |
+  |  ...  |   ...  |
+  |   B   |   546  |
+  |   B   |   714  |
+  |   B   |   798  |
+  |  ...  |   ...  |
+
+![](R.svg)
+
+R isn't that great for entering numbers in. You can either create the data set with jamovi (see below) and export it as a *.csv* file to be read into R:
+
+```
+data <- read.csv('path/to/file.csv')
+```
+
+or you can do something like this:
+
+```
+data <- data.frame(
+  Brand = c('A', 'A', 'A', 'A', 'A', 'A', 'A',
+            'B', 'B', 'B', 'B', 'B', 'B', 'B'),
+  Energy = c(672, 840, 924, 966, 504, 756, 588,
+             546, 714, 798, 336, 504, 420, 714))
+```
+
+once the data is imported, you can perform a t-test with the `t.test()` function. It takes the form `t.test(formula, data)`.
+
+```
+t.test(Energy ~ Brand, data)
+```
+
+![](v.svg)
+
+Simply enter the values into the jamovi spreadsheet, with a separate column for *Brand* and for *Energy*. Double clicking on the column header will let you change the name of each column.
+
+##### Solutions
+
+```{r}
+data <- data.frame(
+  Brand = c('A', 'A', 'A', 'A', 'A', 'A', 'A',
+            'B', 'B', 'B', 'B', 'B', 'B', 'B'),
+  Energy = c(672, 840, 924, 966, 504, 756, 588,
+             546, 714, 798, 336, 504, 420, 714))
+
+t.test(Energy ~ Brand, data)
+
+jmv::ttestIS(formula=Energy ~ Brand, data, welchs=TRUE, students=FALSE)
+```
+
+#### 5. What is the value of the test statistic and the p-value? Explain how the p-value helps you decide between the null and alternative hypotheses.
+
+##### Solutions
+
+The test statistic is $t$ = -1.897 and the associated p-value is 0.0821.
+
+This helps us choose whether or not there is strong evidence to reject $H_0$. The smaller the p-value the stronger the evidence against $H_0$ since the p-value indicates the probability of observing data as or more extreme as that observed when $H_0$ is true.
+
+This particular p-value indicates that there is an 8.2% chance of getting samples of 7 servings of Brand A and 7 servings of Brand B yoghurt where the sample means differ by as much as 174 kJ per 200g serving, even when there are no differences in the mean food energy for the two brands.
+
+#### 6. Give a clear statement suitable for inclusion in a report that summarises the results of this hypothesis test.
+
+##### Solutions
+
+The final statement is dependent upon the initial level of significance which (along with power, sample size) should be determined before the study is undertaken. One researcher may be prepared to accept weaker levels of evidence than another to reject the null hypothesis. This is why it is important to state the p-value along with a concluding statement, so the reader can form an opinion on what to believe.
+
+There is only weak evidence of a statistically significant difference in the true population mean food energy content between Brand A and Brand B yoghurts (p = 0.082). **OR**, at the 5% significance level we would conclude there is not a statistically significant difference in population mean food energy content between Brand A and Brand B yoghurt (p=0.082).
+
+#### 7. Is this an experiment or observational study?
+
+##### Solutions
+
+This is an observational study. No randomisation has occurred with respect to a predictor, simply observing what exists.
+
+#### 8. What assumptions have you made in this analysis?
+
+##### Solutions
+
+ i. Each sample is a random sample from the population of food energy measurements for Brand A yoghurt and the population of food energy measurements for Brand B yoghurt respectively.
+ ii. The two populations are independent of each other.
+ iii. The sampling distribution of the difference in sample means is normally distribution.
+ 
+Note: Strictly speaking, the 2 sample t-test is exactly correct only when both of the parent populations we are sampling from are normal. In practice, however, the procedure is fine as long as it is reasonable to assume that the sampling distribution of the difference in sample means is normal (as stated above). The closer the original distributions are to being normal, the more equal the sample sizes and the bigger the sample size in each group, the more we can rely on this assumption.
+
+#### 9. What would your findings have been if you had used a confidence interval to test the research question?
+
+##### Solutions
+
+We could have used a confidence interval to summarise the results of the study. For example, we can be 95% confident that the population mean food energy for Brand B yoghurt is between 25.8 kJ more and 373.8 kj less per 200 g serving than the mean food energy content for Brand A yoghurt; this interval can be seen by looking at the t-test output above. Notice how the interval contains zero, so a zero difference is a plausible value, hence we cannot reject the null hypothesis of no difference.
+
+
+## 1.2 Hypothesis Testing Concepts - Power
+
+The concept of statistical power was discussed in Lecture 1. 
+
+#### 1. Describe the concept of statistical power.
+
+##### Solutions
+
+Many definitions were given in lecture slides. Choose which one makes the most sense to you. They all indicate that the power of a hypothesis test is the probability of rejecting $H_0$ when is $H_0$ false (i.e., correctly rejecting the null hypothesis). 
+
+#### 2. How is power generally related to sample size?
+
+##### Solutions
+
+Generally, a bigger sample size leads to a more powerful study (i.e., an increased ability of the test to pick up differences as being statistically significant). The bigger the sample size, the more likely we are to reject $H_0$ when it is false. This is due to the precision of the estimate being increased (or the standard error of the estimate decreasing) as sample size increases.
+
+#### 3. Using the yoghurt data from Section 1.1.4 above, calculate the power of the test to pick up a difference of 40 (kJ per 200g serving) in food energy.
+
+In order to calculate the power of the test, we need an estimate of the standard deviation. One option is to take the average of the standard deviations. 
+Let $S_A$ be the standard deviation of Brand A and $S_B$ be the standard deviation of Brand B.
+
+$S_A = 172.20$ and $S_B = 170.97$. The average standard deviation is therefore
+
+$$ { { 172.20 + 170.97 } \over 2 } = 171.59 $$
+
+![](R.svg)
+
+Use the `power.t.test()` function to calculate the power as follows:
+
+```{r, eval=FALSE}
+power.t.test(n=14, delta=40, sd=171.59, sig.level=0.05)
+```
+
+![](v.svg)
+
+Make sure you have the *jpower* module installed, and then Analyses → jpower → Independent Samples T-Test. (To install jpower, Analyses → Modules → jamovi Library. Int the jamovi library locate *jpower* and select 'install'.)
+
+Now things are a little different in *jpower*; rather than separately specifying the expected difference between means and the standard deviation, *jpower* requires that we combine these into a single value called *effect size*. Effect size is calculated:
+
+$$ \delta = { { \mu_1 - \mu_2 } \over s } $$
+
+Hopefully you can see that $\mu_1 - \mu_2$ represents the difference between means. Substituting our values in, we calculate the effect-size:
+
+$$ { 40 \over 171.59 } = 0.233 $$
+
+Now we are ready to perform our power calculation with *jpower*. We want to calculate *Power*, so choose that for the first option (called *Calculate*). Next fill in the values for *Minimally interesting effect size* (the effect-size we just calculated), and *N for group 1* (the number of participants in the first group). Leave the other options at their defaults.
+
+What is the power for the test?
+
+##### Solutions
+
+Power is 0.069, or 6.9%
+
+```{r}
+power.t.test(n=7, delta=40, sd=171.59, sig.level=0.05)
+```
+
+#### 4. To achieve a power of 80%, do you expect that a larger or smaller sample size than the current sample size is required? Explain your reasoning.
+
+##### Solutions
+
+A larger sample size is required, as larger sample size has less uncertainty in means; with less uncertainty comes greater power to pick up the differences. This is due to the precision of the estimate being increased (or the standard error of the estimate decreasing) as sample size increases.
+
+#### Work out the sample size required to achieve a power of 80%.
+
+![](R.svg)
+
+Use the `power.t.test()` function, however this time, specify the desired power and leave `n` unspecified.
+
+```{r, eval=FALSE}
+power.t.test(delta=40, sd=171.59, sig.level=0.05, power=0.8)
+```
+
+![](v.svg)
+
+Analyses → jpower → Independent Samples T-Test. This time we want to calculate *N*, or *N per group*, so choose that for the first option (called *Calculate*). Next enter the *Minimally interesting effect-size*, and *Minimum desired power*.
+
+What sample-size is required?
+
+##### Solutions
+
+Required sample size is 290 per group, or 580 total.
+
+```{r}
+power.t.test(delta=40, sd=171.59, sig.level=0.05, power=0.8)
+```
+
+#### Note: Power calculations for one-way ANOVA. 
+
+We can use the following function to perform a power calculation for a one-way ANOVA
+```
+power.anova.test(groups = NULL, n = NULL,
+                 between.var = NULL, within.var = NULL,
+                 sig.level = 0.05, power = NULL)
+```
+
+#### 5. Summarise your understanding of the relationships between the power of an hypothesis test with each of
+
+ - the effect size you are trying to detect, 
+ - the variance of the populations being compared, 
+ - the significance level and the sample size.
+ 
+Consider whether increasing or decreasing each of these (effect size, error variance, sig level, sample size) will result in an increase in power.
+
+##### Solutions
+
+Ⓢ 
+
+We may summarise the relationship between the power of a test and other characteristics of the data. The following table summarises what increasing different parameters has on power.
+
+ | Increase       | Power            |
+ |----------------|------------------|
+ | Effect size    |   ➚ (increases)  |
+ | Error variance |   ➘ (decreases)  |
+ | Sample size    |   ➚ (increases)  |
+ | Alpha          |   ➚ (increases)  |
+
+
+## 1.3 Required preparation for Lab 2
+
+**Before** attending Lab 3 complete 1.3.1 below - read through the publication within the Case Study section below so that you are able to discuss various aspects of the two studies that are reported in the paper.
+
+The lab will commence under the assumption that you have read the article!
+
+### 1.3.1 Case Study
+
+Cardiegues M. et al (2000). A comparison of jump performances of the dog flea, Ctenocephalides canis (Curtis, 1826) and the cat flea, Ctenocephalides felis felis (Bouch, 1835), Veterinary Parasitology, Volume 92, Issue 3, Pages 239 -- 241. https://www.sciencedirect.com/science/article/pii/S0304401700002740
+
+The above short research paper will be discussed in detail in next week's lab (Lab 3) so it is critical that you read through it BEFORE attending your lab so that you are able to discuss various aspects of the two studies that are reported in the paper. The lab will commence under the assumption that you have read the article!
+
+As you are reading, note the:
+
+ - variables of interest (response and explanatory), 
+ - how the variables were measured, 
+ - the type of study (observational or experimental), and 
+ - any concerns that you may have regarding the way the research was conducted.
+
+
+## 1.4 Self-study – practice analyses and reporting results
+
+ - A researcher has developed a language training system for infants. To test the system, 12 parents are randomly selected who are willing to use the language training system with their new born infants for two years. Samples of 12 different toddlers who do not use the language training system are also tested forming a control group; the data from the test are collected and analysed.
+
+ - At the end of the two-year test period, the number of words in each toddler’s vocabulary is measured. The data are in the data file *Lab 01 - swimmers.sav*.
+
+Based on the data, consider some basic exploratory analysis displays and then use the independent samples t-test in R or jamovi to assess whether the language training system is beneficial.
+
+Write a brief summary of the results of this study appropriate for inclusion in a report documenting the study.
+
+##### Solutions
+
+Define parameters
+
+ - Let $µ_1$ represent the population mean number of words in a toddler’s vocabulary having used the language training system (research group)
+
+ - Let $µ_2$ represent the population mean number of words in a toddler’s vocabulary having **NOT** used the language training system (control group)
+
+State Null ($H_0$) and Alternative ($H_a$) Hypotheses (in terms of the defined parameters)
+
+ - $H_0: µ_1 = µ_2$
+ - $H_a: µ_1 > µ_2$   (1-tailed test)   OR   $µ_1 - µ_2 > 0$
+
+Test statistic and p-value: $t$ = 2.266; p-value = 0.034 (for 2-tailed test), so for this test our p-value = 0.017 
+
+ - Strong evidence against the null hypothesis, suggests that there is a statistically significant difference in the population mean number of words in a toddler’s vocabulary, with the control group having less on average than the research group. It appears (based on this two-sample test without accounting for other explanatory variables) that the language training system results in a statistically significant increase in vocabulary.
+
+ - Although if we consider the confidence interval we are 95% confident that the population mean increase due to the system is between 1.8 and 42.1; which is quite wide and the lower limit is near zero, so practically speaking this may not be great evidence of it being beneficial.

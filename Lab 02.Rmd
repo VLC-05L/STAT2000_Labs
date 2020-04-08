@@ -1,0 +1,271 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+
+loadNamespace('haven')
+loadNamespace('car')
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 2 - Week 3
+
+#### Recall Lecture 2:
+
+  - Research Methods
+    - The Research Process
+      - Type of Studies
+      - Sampling
+      - Study Design
+      - Measurement
+
+### Lab Objectives
+
+On completion of this lab you will be able to:
+
+ - identify response, explanatory and other variables from research papers, their type and how they were measured.
+ - distinguish between observational studies and experiments. 
+ - critically assess the research design.
+ - form groups for the project.
+
+#### Overview
+
+In the Week 2 lecture (and in Module 3) we discussed foundational aspects of study design, including but not limited to, identifying: the type of study appropriate for your investigation (survey, observational, experiment); how you could obtain representative samples and measure key information validly and reliably; aspects surrounding bias and precision. 
+
+We now employ such ideas in the critical appraisal of existing published studies, and begin to design our own experiments.
+
+#### Required Readings -- Read first case study prior to attending your lab
+
+ 1. Case Study 1 -- from Blackboard  
+    - Cardiegues M. et al (2000). *A comparison of jump performances of the dog flea, Ctenocephalides canis (Curtis, 1826) and the cat flea, Ctenocephalides felis felis (Bouch, 1835)*, Veterinary Parasitology, Volume 92, Issue 3, Pages 239 -- 241. https://www.sciencedirect.com/science/article/pii/S0304401700002740
+ 
+ 2. Case Study 2 -- from Blackboard
+    - de Groot R. H. M., Hornstra G.; Roozendaal N.; Jolles J. (2003) *Memory Performance, but not Information Processing Speed, may be Reduced During Early Pregnancy*, Journal of Clinical and Experimental Neuropsychology, Volume 25, Issue 4, pages 482 -- 488. https://www.tandfonline.com/doi/abs/10.1076/jcen.25.4.482.13871
+
+## 2.1 Case Study 1
+
+*The lab will commence under the assumption that you have read the first article!*
+
+- Cardiegues M. et al (2000). *A comparison of jump performances of the dog flea, Ctenocephalides canis (Curtis, 1826) and the cat flea, Ctenocephalides felis felis (Bouch, 1835)*, Veterinary Parasitology, Volume 92, Issue 3, Pages 239 -- 241. https://www.sciencedirect.com/science/article/pii/S0304401700002740
+
+It's possible, perhaps, that you don't particularly care about whether dog fleas jump higher than cat fleas. However, by going over this study you will hopefully learn the importance of being precise in the conduct and reporting of scientific research and in interpreting the results.
+
+#### 1. Identify who may be interested in such results.
+
+##### Solutions
+
+If you were questioning the relevance of this paper perhaps consider issues of quarantine, use of the information by veterinarians or producers of flea products, biologists.
+
+#### 2. Comment on the two related studies that are reported in this paper. Among other things, you should consider the following:
+ - What are the response and explanatory variables?
+ - How were each of the variables measured?
+ - Is each study observational or experimental?
+ - Consider yourself as an objective researcher in the field. Identify:
+   - positive features of the way this research been well conducted;
+   - concerns, if any, you have about the research;
+   - any improvements in the way that the data was collected, analysed or presented.
+
+##### Solutions
+
+###### *Response and Explanatory Variables*
+
+It seems the research has probably been conducted quite reasonably but reported poorly. The two studies are basically about comparing the jump length of the dog flea to that of the cat flea, and the same for jump height. 
+
+The predictor (explanatory) variable was 'species' (of flea), it was the predictor of the measured outcomes (response) 'jump distance' and '% achieving particular height'. 
+
+###### *Experiments or Observational Studies*
+
+Were fleas randomised to each species? No, they were already either cat or dog fleas. Therefore, it is not an experiment, but is an observational study.
+
+These are observational studies because there is no randomisation with respect to explanatory variable of interest; fleas are not randomly allocated to be type X (cat) or type Y (dog) by the researcher, they are already the particular type of flea. We can't make a particular flea (or randomise it to be) a dog flea or a cat flea; it is already one or the other. 
+
+The other variables were controlled by the researcher so it is different from just observing how high or long fleas jump in their natural environment, which would be difficult to do.
+
+In most research, the benefit is not so much in the information that we gather about the particular subjects involved in the study but in how we can generalise those results to a larger population. 
+
+In this case, there were 450 dog fleas and 450 cat fleas used for the jump length measurements and 1500 fleas for each species used in the jump height measurements. 
+
+We are told that the fleas came from flea colonies maintained in this particular research laboratory in France.
+
+How applicable are these results to fleas not from these colonies, e.g., on your household pet? 
+This issue of the generalisability of results is often known as external validity. (N.B., this is not a criticism of this research. The researchers have appropriately reported where the fleas have come from. They have essentially left it to the reader to decide how to use the information. Unfortunately, research like this can often be interpreted as if the sample were in fact a simple random sample from the population of all fleas of that particular species that ever have or will exist at any place on any host.)
+
+The researchers have given some consideration to other variables that might affect the measurements. They have not separately considered the effect of the sex of the fleas but have at least reported the approximate sex ratio for the fleas they used.
+
+They have also maintained the temperature and relative humidity at constant values to minimise any effect these variables might have. All fleas were of about the same age and were unfed so any effect of these variables is also minimised.
+
+Are there other variables which should have been considered? Whilst controlling such variables, questions may be asked as to whether the chosen constant values were appropriate; perhaps it lead to a bias towards one flea (preferring such a value).
+
+The system for measurement of the jump length seems quite reasonable but as with any measurement system there are possible issues. Were measurements made from the centre of the unsticky zone or from the edge? Obviously this would shift all measurements up or down by 1cm and should at least have been reported. 
+
+Why a 2cm unsticky zone? Why not 1cm or 3cm in diameter. Would the flea move from its starting position only by jumping or might it walk a little bit before jumping? Not claiming to be an expert in flea behaviour, but if it walked a little, then too small a zone might result in too many fleas just walking to the edge of the zone and getting stuck there before actually jumping. Too large a zone might result in too much added variability in the measurement because you don't know exactly where the flea started its jump from. So was 2cm considered an appropriate practical compromise between these concerns or related to other issues (e.g., size of the dish the fleas were transported in) or was it an arbitrary decision?
+
+Similarly, why were there two fleas deposited together in the centre? Why not 1 or 4? Presumably the plastic is sticky enough so that the fleas really do get reliably stuck when they land and thus the measured distance really is for a single jump. Also the measurement system can only measure the length of a flea's first jump after being placed on the plastic. Is this representative of flea jumps in general? Would subsequent jumps be likely to be smaller because the flea got "tired" or larger because the flea "warmed up"?
+
+Such thought identifies the need to be clear on what is being measured and why. How are fleas transported to the measurement device? How might this affect their performance? What was the stimulus for a flea to jump? For how long did the researcher wait before a jump? What if a flea walked to the edge of the sticky area rather than jumping? Does the surface on which the flea is placed affect the ability to jump (perhaps for one flea more than another)?
+
+Similarly, there are issues with the measurement of jump height. Firstly it is very important to understand that jump height has NOT been measured directly. The actual data is proportions of fleas of each type that succeeded in jumping higher than cylindrical tubes of height 1 to 30cm. It may be interpreted that the measurement is based on how many of the ten fleas that were deposited on the base of the tube were left after a defined period of time, with the rest obviously having jumped out of the tube; however this has not been clearly defined. If this interpretation is correct then a flea could jump several times before succeeding in getting out of the tube. Some jumps may not have been high enough or the flea may have hit the wall of the tube. So the data possibly relates to the biggest of several jumps for each flea. Why were the tubes 9cm in diameter? How might this affect the results?  Similarly, perhaps fleas far exceed the height of the tube, rather than only just making it out.
+
+You could also question the length of time that was allowed before checking the number remaining, or what stimulus was provided for a flea to jump.
+
+You can always argue about how much detail should be included in a research paper but there should be enough detail about the measurement so that readers are clear about what each variable really represents. Ideally another researcher should be able to replicate the method and measurements. The term operational definition is often used for a clear and concise definition of a variable in terms of a procedure by which it can be reliably measured.
+
+In the Abstract and in the Results and Discussion the mean length of the C. felis felis jump was reported as 19.9 ± 9.1 cm. The number 19.9 is easy to understand but what does the ± 9.1 represent. An interpretation of the text "mean length ... was 19.9 ± 9.1 cm" is that the 9.1cm is the estimated standard error of the mean (the standard deviation of the sample of jump lengths divided by the square root of the sample size, $s \sqrt n$). Another possible interpretation is that the 9.1cm is the estimated margin of error for a confidence interval estimate of the mean jump length ($t \times { s \sqrt n }$). In fact, if you look closely at the data you can work out that it must be the standard deviation, s, of the jump lengths but this is never defined. The notation a ± b is useful and widely used in scientific literature but it must be clearly defined what a and b represent lest it otherwise be ambiguous or uncertain.
+
+A t-test was used to compare the mean jump lengths and a chi-square analysis for jump heights. It is questionable why the authors see the need to say that differences were considered significant at p < 0.05 when the actual p-values in both cases were less than 0.001, more than 50 times less, but at least they did give some indication of the actual p-values.  Perhaps 0.05 was the originally chosen sig level, but unclear.
+
+If the objective of the research was simply to ascertain that there is a difference in mean jump length of the two species of flea then the researchers have gathered far more data than was needed. If however, they were interested in providing an understanding of the distribution of jump lengths for the two species of fleas then they have achieved this. The presentation of this data in Figure 1, however, is not very good. Gaps in histograms suggest a discrete variable when in fact it the variable is continuous.
+
+If the authors are trying to present a useful picture of each distribution then separate histograms would be far better. Ideally vertically- aligned histograms using a common scale on the horizontal axis is preferable (see Howley and Gerlach p.50 Business Statistics in Australia (short loans at library) for details, or the series of videos at [www.statstuneup.com.au](http://www.statstuneup.com.au)). Such comparisons allow for a clear description and comparison using the 3Ss (shape, centre and spread). Such histograms or side-by-side boxplots would be preferable.
+
+Also there is a major error in the data -- if you sum the percentages for the dog flea they only add to about 85% not 100%. N.B. This is unlikely to be picked up just by inspection of the Figure. The authors, reviewers and editors didn't pick this up. (This was noted whilst trying to recreate the data set from the graph to understand some of the other discrepancies in the data.) The suspicion is that there were originally two different scales and the author has inadvertently overwritten one of the scales.
+
+Jump height analysis: the data has been grouped into 5cm height groups and chi-square analysis used. (Chi-square analysis was part of STAT1070 but won't be used very much in STAT2000). The method is OK but some information is lost because the data is treated as nominal. There are other possibilities.
+
+The statement: "The mean height jump carried out by 50% of fleas was calculated after linearization of the curves: it was 15.5 and 13.2 cm for C. canis and C. felis respectively." is not very clear. What they are basically saying is that 50% of dog fleas could jump higher than 15.5 cm and 50% of cat fleas could jump higher than 13.2 cm. If you draw a horizontal line at 50% in Figure 2, this is about where the horizontal line cuts the two curves. It isn't clear exactly what they mean by linearization -- the suggestion is some kind of smoothing of the curves (but what kind?). This measure is more a median jump height than a mean.
+
+As stated above, it is entirely possible that you don't particularly care that dog fleas jump higher and longer than cat fleas. However, by going over this study you have hopefully learnt about the importance of being precise in the conduct and reporting of scientific research and equally precise in interpreting the results. 
+
+## 2.2 Case Study 2
+
+Read the following research paper:
+
+- de Groot R. H. M., Hornstra G.; Roozendaal N.; Jolles J. (2003) *Memory Performance, but not Information Processing Speed, may be Reduced During Early Pregnancy*, Journal of Clinical and Experimental Neuropsychology, Volume 25, Issue 4, pages 482 -- 488. https://www.tandfonline.com/doi/abs/10.1076/jcen.25.4.482.13871
+    
+You may not completely understand all of the detailed terminology used in this paper but hopefully you will understand the main concepts. Answer the following questions:
+
+#### 1. What groups are being compared in this study? Is this an experimental or an observational study?
+
+##### Solutions
+
+This single study suggests some effect of pregnancy on memory performance. (You might like to read the following paper which uses meta-analysis to combine the results of the de Groot paper and many others to provide more precise estimates of the size of this effect. Henry J. D., Rendell P. G. (2007). A review of the impact of pregnancy on memory function, Journal of Clinical and Experimental Neuropsychology, Volume 29, Issue 8, pages 793 - 803. The full details of meta-analysis are beyond the scope of STAT2000 but hopefully this paper will give you some idea of how meta-analysis is conducted.)
+
+There are two comparison groups: a group of pregnant women and a control group women who were not pregnant. This is an observational study. Individuals are NOT being randomly allocated (randomised) to the two levels of the nominal explanatory variable, being pregnant or not.
+
+#### 2. What response variables are being used as the basis for the comparison? Are they clearly defined?
+
+##### Solutions
+
+A range of cognitive tests were used. The response variables are described in the MATERIALS AND METHODS section of the paper under the sub-section ‘Tests for Cognitive Functioning’ and are also listed in Table 2. Note that some of the tests yield several different response variables. The tests are well-enough described for the reader to have a reasonable understanding of how the test was carried out and what it attempts to measure. The complete detailed definitions of these standard tests are contained in the references given.
+
+#### 3. Apart from these response variables and the nominal explanatory variable defining the comparison groups, what other variables are considered in this study and why?
+
+##### Solutions
+
+A number of other variables are listed in Table 1. These were used as a check on the comparison groups. Except for the explanatory variable of interest (pregnancy), the researcher is hoping that the comparison groups will be as similar as possible. N.B.. In an experiment, we can use randomization and blocking to help ensure similar comparison groups. This is not possible in an observational study where the groups form naturally. However, a researcher can and should at least consider some other variables to make sure that there are no obvious differences between groups that might bias the comparison. In this case, there was some evidence of differences in total number of pregnancies and education level between the two groups. For this reason, "…the group differences for the dependent variables were analyzed by ANOVA with education and total number of pregnancies as covariates". In other words, education level and number of pregnancies were included in the analysis as additional explanatory variables, not because we were particularly interested in the effect of these on the response variable(s), but to ensure that we account for any such effect in the analysis and don't incorrectly attribute such variation to pregnancy. (We will learn how to do this by the end of the course.)
+
+The selection and exclusion criteria (described in the MATERIALS AND METHODS section of the paper under the sub-section Subjects) could also be considered variables. They are used for a similar reason, namely, to eliminate other possible sources of bias between the groups and reduce variation within the groups.
+
+#### 4. The phrase "clinical significance" is used in the abstract. What does this mean? Is this the same as "statistical significance"?
+
+##### Solutions
+
+The phrase "clinical significance" or sometimes more generally "practical significance" is used to indicate a difference that is of some real "clinical" or "practical" importance. For example, if we were considering the effectiveness of a diet or an exercise program in losing weight, a change of 5 kg would probably be considered of "practical significance" whereas a change of 0.1 kg is likely to be too small to be of any real "practical" interest.
+
+This is quite a different concept to "statistical significance" which is purely about the strength of the evidence that a difference exists, NOT the size of such a difference.  This is why you should always provide some information about the size of any effect detected and not just give a p-value.
+
+In this study, the researchers are saying that they have found evidence of a difference in some cognitive measures between the groups but the differences are not very big and they aren't sure of how meaningful those difrences really are.
+
+#### 5. Consider yourself as an objective researcher in the field. Identify:
+ - positive features of the way this research been well conducted;
+ - concerns, if any, you have about the research;
+ - any improvements in the way that the data was collected, analysed or presented
+
+##### Solutions
+
+Overall this seems a reasonably well conducted and reported study. In particular, the researchers are quite careful in their conclusions and clearly identify the weakness of their cross-sectional design and foreshadow reporting of further research using a longitudinal design. This would probably involve similar cognitive tests but on the same group of women over time, including periods when each women was pregnant and not pregnant. Some possible concerns might be the exclusions described in sub-section Statistics under section MATERIALS AND METHODS. It seems reasonable to exclude the data for a pregnant subject because of unacceptable conditions for the tests. However, the exclusion of 5 data points just because they were extreme seems dubious. It would be of interest as to know more about these data points, exactly why they were excluded and whether the exclusion of these points made much difference to the results.
+
+The formation of the control group and the use of number of pregnancies as a covariate could perhaps be considered in a bit more detail. Is number of pregnancies an interval scale? For example, is the difference between 0 and 1 pregnancy equivalent to the difference between 2 and 3 pregnancies. Perhaps we need at least 3 comparison groups; women who have never been pregnant, women who are currently pregnant and women who have been pregnant but who aren't at the moment. This depends upon the aims.
+
+### 2.3 Project Discussion – forming teams
+
+As part of this course you must form a project team to design and conduct a simple research project. Time will be allocated in the lab for forming teams and initial discussions.
+Read and understand the Group Project documents on Blackboard:
+
+ - Group Project – Overview
+ - Working in Teams
+ - Group Self-assessment
+ - Meeting Minutes
+
+Forming teams:
+
+ - All students in a team need to be from the same lab class
+You should consider people who have a similar work ethic or aspirations to you, will contribute to the project and with which feel able to interact and meet regularly. Your tutor will facilitate this enabling students to briefly get to know others in the class, to discuss preferences, goals, etc before groups are established.
+ - Review the project criteria carefully see Overview document on Blackboard.
+ - Discuss team communication. 
+    - You may wish to exchange contact details (only disclose as much as you feel comfortable – at a minimum UoN email addresses should be shared)
+    - Establish an agreed-upon regular weekly meeting day, time and location. 
+       - If this is problematic then individuals may need to change teams.
+    - You may wish to nominate a leader for your group and/or establish some rules for how the group will operate, especially during meetings. Rotation of duties is often beneficial.
+    - Ensure everyone maintains ownership of the project and the data, and the project’s successful completion.
+ - Brainstorm some possible experimental scenarios with your team members. 
+    - A good scenario will meet the specified criteria, be interesting to team members, sufficiently complex to provide challenging study design and data analysis but not be so complicated that it is impossible to complete within the limited time available.
+    - Once a scenario has been chosen you can start preparing your project proposal. Better to determine this sooner than later and discuss with your tutor as your tutor may identify issues precluding you conducting the desired project.
+    - Check with your tutor if you have questions about any aspect of the project.
+ - Before you finish this lab, you must give your tutor a list of the students who are in your group and an identified agreed upon meeting day, time and location.
+
+### 2.4 Homework -- The concept of Confounding
+
+A social psychologist wants to test the implications of a theory of personal space. He thinks that people will differ in their reaction to others who intrude in their personal space depending on the perceived status of the intruder. Specifically, he predicts that people who are viewed as having higher status in some way will be permitted to move closer than those who are not viewed as having higher status.
+
+The investigator arranges to conduct a study using undergraduate students as participants wherein he manipulates status by controlling the manner in which individuals are introduced to a subject. Friends of the researcher (all male graduate student research assistants) are introduced as observers in one of three ways. As "an undergraduate student working for the psychology department"; "an undergraduate honours student working for the researcher" or "a graduate student working for the researcher".
+
+Prior to testing any subjects, three different friends were randomly assigned one of the three roles to play and subsequently kept that same role throughout the experiment. Each subject was taken to a different small room with two chairs, and provided an experimental task to work on. The friends were introduced by the psychologist to subjects while subjects worked on their project.
+
+After being introduced to each subject the friend took the second chair and placed it within 15 centimetres of a subject, gave the impression of making observations for 5 minutes, and then left. The friend measured how many participants moved their chairs away, even slightly, when he moved next to them.
+
+After many subjects were tested in this manner, the psychologist found significantly fewer people adjusted their seating position when the observer was introduced as a graduate student than when the observer was introduced as an undergraduate. There was no difference in the number of moves made by subjects in the two conditions in which the observers were introduces as undergraduates. The investigator concluded that his hypothesis was supported.
+
+#### 1. Is this an experimental or observational study?
+
+##### Solutions
+
+1. 	This is an experimental study as the roles (levels of the predictor variable, perceived status of the intruder) were randomly allocated, and the effect on the response, whether the subject moved his/her chair away from the person potentially intruding on the subject's personal space, was recorded.
+
+#### 2. What is the independent variable (and its levels) in this study?
+
+##### Solutions
+
+The independent or explanatory variable, perceived status of the observer, has three levels in this study:
+ - "an undergraduate student working for the psychology department"
+ - "an undergraduate honours student working for me"
+ - "a graduate student working for me"
+
+#### 3. What is the dependent variable?
+
+##### Solutions
+
+The response or dependent variable is whether the subject moved his/her chair away (or how many subjects moved their chairs away) while the observer sat 15 cm from the subject for 5 minutes.
+
+#### 4. Identify the confounding variable and explain why it is a threat to the study’s internal validity.
+
+##### Solutions
+
+The key sentence is "Prior to testing any subjects, three different friends were randomly assigned one of the three roles to play and subsequently kept that same role throughout the experiment." Thus any differences in participant reaction could have absolutely nothing to do with perceived status of the observer and everything to do with the personal characteristics of that particular individual (e.g., viewed as good looking/attractive/not, scary, bad breath, and dozens of other possible characteristics). The explanatory variable is completely confounded with other differences between the individuals.
+
+#### 5. What specific control technique(s) should the investigator have employed in order to protect the internal validity of this study?
+
+##### Solutions
+
+Rather than randomly assign a role to each friend for the entire study it would be much more appropriate to block by observer. For example, a (random) third of the people who are (randomly) allocated to the condition where told that the observer is "an undergraduate student working for the psychology department" should be tested with observer 1, a third with observer 2 and a third with observer 3. Similarly for the other levels of the explanatory variable. This breaks the confounding of differences in the characteristics of the observers and the intended independent variable. If all three observers appear equally often in each status condition, then any differences in the number of subjects who move their chairs must be due to changes in the perceived status, or chance.

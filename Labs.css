@@ -1,0 +1,39 @@
+
+h4 {
+  margin-top: 1.5em ;
+  margin-bottom: 1em ;
+}
+
+h5 {
+  display: none ;
+}
+
+.section.level1 > div:first-of-type {
+  border-radius: 6px ;
+  padding: 6px 30px 30px;
+  background-color: #EEEEEE ;
+  margin: 60px ;
+}
+
+
+.section.level4 > p,
+.section.level4 > pre {
+  margin-left: 24px ;
+}
+
+.section.level5 {
+  background-color: #EEEEEE ;
+  padding: 8px 8px 8px 8px ;
+  border-radius: 4px ;
+  margin-left: 16px ;
+}
+
+.table {
+  margin: auto ;
+  max-width: 500px ;
+  whitespace: nowrap;
+}
+
+td, th {
+  white-space: nowrap;
+}

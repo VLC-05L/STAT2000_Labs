@@ -1,0 +1,83 @@
+---
+title: "Power for STAT2000 Group Assignment"
+output: html_document
+---
+
+This document provides some tips and approaches you might use when calculating power for your group assignment proposal. You must justify the samples sizes you intend to use in your group assignment proposal.
+
+In order to calculate power, there can be some difficulty in coming up with the *expected* difference between the group means, and the *expected* variation in the data. There are three ways we can do this:
+
+ 1. estimate it yourself (sometimes called "pull it out of your butt")
+ 2. perform a pilot study (preferred)
+ 3. choose a *minimally interesting difference*.
+
+### 1. estimate it yourself
+
+If you are familiar with the phenomena of interest, you can simply estimate the difference in means yourself. For example, in Week 3, the farmer expected mean yields of 3, 3, and 2.8. We don't know why he expected this, but presumably his familiarity and experience with different fertilisers lead him to this expectation. You're welcome to estimate the means and standard deviations yourself, but you must provide a good justification for why you've chose the figures you have. If it looks more like you chose those values because it means you only need 20 samples, then this probably won't cut the mustard. In research, justification is everything. So i'd encourate you to perform a pilot study.
+
+### 2. perform a pilot study
+
+Performing a pilot study feels like a hassle, but it's almost always the easiest thing to do. Perform a few iterations of your experiment, perhaps 8 of each group. Measure your means for each factor, i.e. if you were comparing paper aeroplanes made from two different designs and using two different paper types, you might have means like this:
+
+ | Design        | Paper type
+ |---------------|------------|-------|
+ |               | GSM30      | GSM60 |
+ | Dracula       |   5.6      |  3.2  |
+ | Prancing Pony |   8.4      |  5.8  |
+
+To perform power calculations, we need estimates of the difference between means; one for the effect of paper plane design (the Dracula vs Prancing Pony design), and for the effect of paper type (GSM30 vs GSM60).
+
+For design type, let's find the smallest difference (i.e. the most difficult to detect) between the Dracula and Prancing Pony designs. For GSM30 it's 8.4 - 5.6 = 2.8, for GSM60 it's 5.8 - 3.2 = 2.6. 2.6 is the smaller, so let's use that as the mean difference for design type. If we repeat the process for paper type, Dracula: 5.6 - 3.2 = 2.4, PP: 8.4 - 5.8 = 2.6, so let's use 2.4 as the difference in means for paper type.
+
+For standard deviation, it's simplest to calculate the standard deviation for each group, and then average them.
+
+Plug these into your power calculation. Hopefully you get a reasonable figure out. If you get a huge number, like more than 100, then see #3.
+
+### 3. choose a *minimally interesting difference*
+
+It's possible that with your pilot data, your means are very close together, and your standard deviation is large (relative to the difference in means), if this is your situation, your power calculations might say that you need an outrageous and impractical number of samples. In this case, you can substitute in a *minimally interesting difference*. If you experiment is comparing the absorbtiveness of sponges, and Brand A aborbs 30mL, and Brand B aborbs 29mL, no-one is going to care about such a small difference. Have a think about how small a difference would be interesting. In the case of sponges, i think a 5mL difference would be interesting, so use that as your *difference in means* instead.
+
+## Performing power calculations
+
+You will have seen methods in your lab for performing power calculations for a one-way ANOVA. For the group project, almost all groups will be looking at a two-way ANOVA to analyse their data. This is the model you need where you have two categorical predictors. As we have not covered this yet, following is an overview on how to calculate power for a two-way ANOVA. 
+
+To perform a power calculation for two-way ANOVA, the `pwr2` package is adequate.
+
+This can be installed with:
+
+```{r, eval=FALSE}
+install.packages('pwr2')
+```
+
+To calculate power, you can use the `pwr.2way()` function as follows:
+
+```{r}
+library(pwr2)
+
+pwr.2way(
+    a = 2,
+    b = 2,
+    alpha = 0.05,
+    size.A = 50,
+    size.B = 50,
+    delta.A = 2.6,
+    delta.B = 2.4,
+    sigma.A = 6,
+    sigma.B = 6)
+```
+
+Each of the arguments are:
+
+ - `a`: Number of levels of Factor A (plane design has two levels; Dracula and Prancing Pony)
+ - `b`: Number of levels of Factor B (paper type has two levels; GSM30, GSM60)
+ - `alpha`: The type 1 error rate; you can just use `.05` for the purposes of this course
+ - `size.A`: The number of samples of each level of Factor A (50 of each type of plane, 100 planes total, 25 of each plane/paper combination)
+ - `size.B`: The number of samples of each level of Factor B (50 of each paper type, 100 planes total, 25 of each plane/paper combination)
+ - `delta.A`: The expected mean difference between the levels of Factors A (see the calculations under *Perform a pilot study above*)
+ - `delta.B`: The expected mean difference between the levels of Factors B (see the calculations under *Perform a pilot study above*)
+ - `sigma.A`: The expected standard deviation of the groups of Factor A (easiest to just average the SD from your pilot study. See above.)
+ - `sigma.B`: Same as `delta.A` (it's an assumption of ANOVA!)
+
+## Desired Power
+
+When choosing a power level, there's no wrong answer unless it's less than 0.8. So have a power level of at least 0.8.

@@ -1,0 +1,57 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+# Lab 11 - Week 12
+
+####
+
+#### Data Files
+
+```{r echo=FALSE}
+xfun::embed_file("Lab 11 - AFL.sav")
+```  
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 09 - Surgical.sav")
+```
+
+
+#### 1. AFL
+
+Consider the data set that is available as *Lab 11 - AFL.sav*, which was the focus of the week 11 lecture.
+
+The response variable of interest, MCG, is the match attendance in thousands at Australian Football League matches on Saturdays at the Melbourne Cricket Ground. We are interested in building a model that "best explains" MCG Saturday AFL attendance. The other variables are:
+
+ - Other: the sum of the attendances (in thousands) at other AFL matches in Melbourne and Geelong on the same day as the match in question.
+ - Temp: the forecast maximum temperature on the day of the match, in whole degrees C, found in The Weekend Australian newspaper.
+ - Members: the sum of the memberships of the two clubs whose teams were playing the match in question (in thousands).
+ - Top50: the number of players in the top 50 in the AFL who happened to be playing in the match in question. Date date of the match in the format dd/mm/yy. 
+ - Home & Away: abbreviation for the home and away teams.
+I have also created 2 new variables so that you don’t need to do the Transform – Compute or Transform – Recode steps yourself.  These are;
+ - LogMCG: the log (base e) of MCG
+ - Interstate: this is 1 for interstate teams, and 0 for Victorian teams
+
+    a) Produce graphs to show the effect of each of the predictor variables on MCG
+    b) Try models with one predictor for MCG, and investigate the residuals.  Is there a problem with the variance of the residuals?  
+    c) Try a number of models including the predictors, and find a good model for log(MCG)
+    d) Check the residuals of your chosen model.
+
+##### Solutions
+
+No solutions are provided for this lab.
+
+#### 2. Surgery
+
+The *Lab 09 - Surgical.sav* file is the same data we have looked at previously. Hint: Although we have seen this data set before, for the sake of this exercise imagine you are seeing it for the first time. Carry out initial exploratory univariate and bivariate analyses on the response and explanatory variables. Are there any outliers? Are the distributions skewed? Are there potential multicollinearity problems? Build your model gradually. Use residual analyses where appropriate to add insight and guide your choices.
+
+##### Solutions
+
+No solutions are provided for this lab.

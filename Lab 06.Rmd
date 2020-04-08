@@ -1,0 +1,259 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+if ( ! require('jmv'))
+  install.packages('jmv')
+
+
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 6 - Week 7
+
+#### Recall Lecture 6:
+
+ - Revision: One-way randome effects ANOVA
+ - Two-way random effects ANOVA
+ - Mixed effects ANOVA
+
+### Lab Objectives
+
+On completion of this lab you will be able to:
+
+ - Explain the difference between a random effect and a fixed effect.
+ - Fit a one-way random effect ANOVA model.
+
+
+### Overview
+
+In the Week 6 lecture we introduced the idea of a random effect. Several examples were given highlighting the differences between fixed and random effects. We also looked at fitting random effects and mixed effects models. 
+
+
+#### Data Files
+
+```{r echo=FALSE}
+xfun::embed_file("Lab 06 - Accounting.csv")
+```  
+
+
+## 6.1 Random Effects Vs Fixed Effects
+
+For the follwing scenarios, consider if you would regard the variable as a fixed effect or a random effect. 
+
+#### 1. A large bread baking business with many production lines are interested in if the production line has an effect on bread quality. They take a random sample of production lines and collect some data. 
+
+##### Solutions
+
+As the business in interested in all production lines, not just the ones that they randomly select, they should treat the variable as a random effect. 
+
+
+#### 2. A scientist is interested in how certain states of being effect ones driving ability. The states they choose to investigate are, *sleepy*, *drunk*, and *normal* as a control.  
+
+##### Solutions
+
+While the researcher may be interested in other states, they have narrowed down their choice of states to the three mentioned. They did not randomly selected the levels from some population of levels, therefore we should treat the factor as fixed. 
+
+
+#### 3. Track times at a racing circuit are of interest to an exotic car manufacturer. They want to know if the driver of a car and the type of car has an effect on the times. They randomly select 10 top level drivers and have them set several times in their own car and two of their competitors cars. Comment on the variables of `car` and `driver`.   
+
+##### Solutions
+
+`car`: It appears that they have chosed their competitors cars and their own to compare. This would be because they care about these specific levels of the factor. Therefore fixed effect. 
+
+`driver`: They have randomly selected from a pool of drivers and therefore are likely to want to say something about whether drivers in general have an effect on lap times. 
+
+`interaction`: This was not asked for, but the manufacturer should also care about the interaction here. Sometimes drivers styles can suit particular cars, meaning that there could be an interaction effect in this scenario. 
+
+
+
+
+## 6.2 Random Effects Vs Fixed Effects
+
+Bean Counters (BC) is an international accounting firm that provides accounting services to a wide range of businesses from small to large corporations. 
+
+Accounting firms are (in)famous for tracking costs associated with particular jobs so that they can understand the profitibility of each client. When a job is complete, an accounting firm will issue their invoice, and if this is less than the costs they have accrued on the job, they "write off" the difference. A positive write off means they have made a "loss" on a job.
+
+BC are interested in knowing whether the partner managing a client has an effect on the profitability of jobs. They have randomly selected four partners from accross the world and then randomly selected ten of their clients. 
+
+The data are available in *Lab 06 - Accounting.csv*.
+
+
+#### 1. Explain why we would consider the variable `partner` to be a random effect. 
+
+##### Solutions
+
+There are many partners from across the world and they have randomly selected four of them. They do not care about differences between the four that happened to be randomly selected, but more so whether `partner` in general has an effect. 
+
+#### 2. Write down the model for the one-way random effects ANOVA model being sure to define all symbols and indexes.   
+
+##### Solutions 
+
+We can formulate the one-way random effects model as follows:
+$$ Y = \mu + \alpha_{i} + \varepsilon_{ij} $$
+The symbols of the above model are defined as follows:
+
+ - $Y$ represents the response variable; in this case the amount written off accounting jobs in dollars.
+ - $i$ = 1, 2, 3, or 4 indicates the different values of the nominal explanatory variable. In this example there are 4 different partners of the accounting firm. 
+ - $j$ = 1, . . . , 10 differentiates between observations in each group, corresponding to different clients that the partner manages. For this model, this is a balanced design as there are the same numbers of clients for each partner.
+ - $\mu$ is the overall population mean write off in dollars. 
+ - $\alpha_i$ is the effect of partner $i$. This is considered to be a random variable such that $α_i \sim \mathcal{N}\left(0,\sigma^2_A\right)$.
+ - $\varepsilon_{ij}$ is the error term for the $j$th client under partner $i$. Assumed to be $N(0, \sigma^2)$. In other words, this is the remaining, unexplained variation for observation $Y_{ij}$ after allowing for the effect of the fertiliser type.
+
+
+#### 3. Fit a one-way random effect model with partner being the random factor. Write your null and alternative hypothesis for testing whether `partner` has an affect on `write_off` and provide your conclusion. Based on your conclusion, provide a recomendation to the accounting firm. 
+
+
+![](R.svg)
+    
+You will need the following packages.
+```{r eval=F}
+install.packages("lme4")
+install.packages("lmerTest")
+library("lme4")
+library("lmerTest")
+```
+
+Where we used the `lm()` function for the fixed effects ANOVA, in the `lme4` package we use the `lmer()` function. This is used similarly to the `lm()` packag, however we define the random effects a little differently. To fit a random effect like partner we would use the following: 
+```{r eval=F}
+fit_1 = lmer(write_off~(1|partner), data = data)
+```
+
+If we wanted to add a fixed effect, we do so as we would in the `lm()` function, ie:
+```{r eval=F}
+fit_2 = lmer(write_off~(1|partner)+fixed_factor, data = data)
+```
+
+To test if a fixed effect and random effect are statistically significant, we can use the following functions respectively:
+```{r eval=F}
+anova(fit_2)
+rand(fit_2)
+```
+
+    
+![](v.svg)
+
+Linear Models -> Mixed Models. Drag the variable `write_off` across the *Dependent variable*. Drag the random factor `partner` to *Cluster variables*. If you have a fixed effect you can drag and drop that in the *Factors* box. 
+
+Scroll down to the *Random Effects* drop down, drag across *intercept|partner* to the *Random Coefficients* box. Make sure you tick the *LRT for Random Effects* check box.
+
+##### Solutions
+
+The null and alternative hypothesis is: 
+$$  H_0: \sigma_A^2 = 0  \\ H_A: \sigma_A^2 > 0  $$
+where $\sigma_A^2$ is the variance of the random factor `partner`. 
+
+
+```{r }
+data = read.csv('Lab 06 - Accounting.csv')
+data$size = as.factor(data$size)
+data$partner = as.factor(data$partner)
+
+suppressMessages(library(lme4))
+suppressMessages(library(lmerTest))
+
+fit_1 = lmer(write_off~(1|partner), data = data)
+summary(fit_1)
+anova(fit_1)
+rand(fit_1)
+```
+```{r }
+data = read.csv('Lab 06 - Accounting.csv')
+data$size = as.factor(data$size)
+data$partner = as.factor(data$partner)
+
+suppressMessages(library(lme4))
+suppressMessages(library(lmerTest))
+
+fit_1 = lmer(write_off~(1|partner), data = data)
+summary(fit_1)
+anova(fit_1)
+rand(fit_1)
+```
+
+```{r echo = F}
+p_value = round(rand(fit_1)$`Pr(>Chisq)`[2],4)
+```
+
+
+The p-value for the likelihood ratio test is `r p_value`. This provides enough evidence to reject the null hypothesis. This means we would conclude that the variance of the random effect of `partner` is greater than zero, meaning that the partner that works on a job affects the amount of the write off. 
+
+If the partner has an affect on write offs, perhaps this means that training is required across all partners to ensure that quoting of jobs and managing of jobs is more consistent. 
+
+
+
+#### 4. Test the assumptions of you model above. 
+
+Testing the assumption of the random effects ANOVA were not discussed in the lecture. This is because they are basically the same as the assumptions for the fixed effects ANOVA, with the additional assumption that the levels of the random effect are randomly chosen from the entire population of levels. 
+
+##### Solutions 
+
+We are told that the partners are randomly selected from all possible partners so the assumption relating to the random effect is satisfied. The clients are also randomly selected. We would assume that the clients are independent because of this, though within a partners group there may be some dependence, but that is expected for a random effects model. 
+
+```{r }
+shapiro.test(residuals(fit_1))
+qqPlot(residuals(fit_1))
+leveneTest(residuals(fit_1)~data$partner)
+```
+
+Both the Shapiro Wilk test of normality and the Levene's test of equality of variance do not suggest any violation of the assumptions due to their relatively large p-values. 
+
+
+#### 5. After consulting with one of the partner of the accounting firm, you are advised that the size of the client may have an affect on the write off. It is expected that larger clients have larger jobs, meaning that sometimes the write offs are bigger. Fortunatly the data gethered by the company has `size` recorded with levels `small`, `medium`, and `large`. Explain why `size` should be considered a fixed effect.  
+
+##### Solutions 
+
+The sizes are broken down into `small`, `medium`, and `large`. This likely represents all possible levels of the factor, or at least it is the levels the firm is interested in. There has not been a random sample of levels, therefore we should consider this a fixed effect. 
+
+
+
+#### 6. Fit another model, now with `partner` as a random effect and `size` as a fixed effect. Do not fit an interaction term. This is what we would call a mixed effect ANOVA. White your null and alternative hypothesis for each of the factors and provide a conclusion on their effect on the response variable `write_off`.    
+
+
+##### Solutions 
+
+
+The null and alternative for the random effect is the same as that presented above. For the fixed effect, the null and alternative will be: 
+$$  H_0: \alpha_i = 0 \text{ for all } i  \\ H_A: \alpha_i \neq 0 \text{ for at least one } i  $$
+
+Fitting the model:
+```{r }
+fit_2 = lmer(write_off~(1|partner) + size, data = data)
+summary(fit_2)
+anova(fit_2)
+rand(fit_2)
+```
+```{r echo=F}
+fixed_p = paste(round(anova(fit_2)[1,6],8))
+random_p = round(rand(fit_2)$`Pr(>Chisq)`[2],4)
+```
+
+From the fitted model above we can see that the p-value for the random effect of `partner` is `r random_p`. The p-value for the fixed effect is `r fixed_p`. Therefore there is not a statistically significant effect due to `partner` when the size of the clients is accounted for. There is a statistically significant effect due to size with larger clients tending to have larger write offs. 
+
+
+#### 7. Why has our conclusion changed about the effect of `partner` when fitting our mixed effect ANOVA model? 
+
+##### Solutions 
+
+There was a counfounding factor in the data that was driving the variation in the response variable. That is size of the client. The size of the client was a lurking variable sitting in the background before we incorporated it into our model. One of the reasons that we made the incorrect decision initially was because the first partner had a lot of small clients selected and the last partner had a lot of large clients selected. This introduced a lot of variation that appeared to come from the partners. When the size of the client was added to the model, this source of variation was accounted for and we found no effect due to partner. 

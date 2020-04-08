@@ -1,0 +1,682 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+
+loadNamespace('haven')
+loadNamespace('car')
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+# Lab 3 - Week 4
+
+#### Recall Lecture 3
+
+  - One-way ANOVA including:
+    - Assumptions 
+    - Diagnostics 
+    - Remedial measures 
+    - Post-hoc tests
+
+
+### Lab Objectives
+
+#### On completion of this lab you will be able to:
+
+ - Perform a one-way ANOVA
+ - Identify and test assumptions for an ANOVA.
+ - Identify when multiple comparisons are appropriate.
+ - Perform the appropriate multiple comparisons and interpret the findings.
+ - Recognise the role of Randomisation and Blocking and be able to implement in practice.
+ 
+
+#### Overview
+
+In the Week 3 lecture we discussed the ANOVA testing procedure and the assumptions underlying a oneway fixed effects ANOVA. We discussed how we may check or test these (diagnose) and what action we may take to remedy the situation when assumptions don't hold (remedial measures). We also considered the additional testing, for differences between groups, once the ANOVA identifies that at least one population mean differs (post-hoc tests).
+
+
+#### Data Files
+
+```{r echo=FALSE}
+xfun::embed_file("Lab 03 - Fertilizer.sav")
+```
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab 03 - Vocab.sav")
+```
+
+
+## 3.1 One-way Fixed Effects ANOVA
+
+In an effort to determine whether there was any difference between three types of fertiliser, agricultural researchers subdivided a 30 hectare farm into plots of two hectares each. Of these 15 plots, five were treated with fertiliser A, five were treated with fertiliser B, and five were treated with fertiliser C. Wheat was planted on the farm and, at the end of the season, the number of tonnes reaped from each plot was measured. The data for this experiment are in the data file *Lab 02 - Fertilizer.sav* and displayed in the following table.
+
+  | Plot |  A  |  B  |  C  |
+  |------|-----|-----|-----|
+  |   1  | 2.8 | 3.4 | 3.1 |
+  |   2  | 2.6 | 2.9 | 2.5 |
+  |   3  | 3.1 | 2.5 | 2.7 |
+  |   4  | 2.7 | 3.1 | 2.9 |
+  |   5  | 3.5 | 2.9 | 2.8 |
+
+Is there a difference in the mean wheat yield for the three types of fertilisers?
+
+We can analyse this data using the one-way ANOVA model for a single fixed effect as described in lecture:
+
+$$ Y_{ij} = µ_{i} + ε_{ij} $$
+$$ Y = µ + α_{i} + ε_{ij} $$
+
+#### 1. Define clearly all the model's symbols (including defining the subscripts) in the context of this example.
+
+#####
+
+The symbols of the oneway ANOVA model may be defined as follows:
+
+ - $Y$ represents the response variable; in this case the tonnes of wheat reaped per two hectare plot.
+ - $i$ = 1, 2 or 3 indicates the different values of the nominal explanatory variable. In this example there are 3 different types of fertiliser and $i$ differentiates them. Let's say A corresponds to $i$ = 1, B to $i$ = 2 and C to $i$ = 3.
+ - $j$ = 1, . . . , 5 differentiates between observations in each group, corresponding to different plots treated with each fertiliser type. This is a balanced design as there are the same numbers of plots treated with each fertiliser type.
+ - $µ_i$ is the population mean tonnes of wheat reaped per two hectare plot for plots treated with fertiliser $i$.
+ - $µ$ is the overall population mean tonnes of wheat reaped per two hectare plot, i.e., the average across all 3 fertiliser types. 
+ - $α_i$ is the effect of fertiliser $i$ on the population mean tonnes of wheat reaped per two hectare plot, i.e. the difference between $µ_i$ and $µ$.
+ - $ε_{ij}$ is the error term for the $j$th plot treated with fertiliser $i$. Assumed to be $N(0, σ^2$). In other words, this is the remaining, unexplained variation for observation $Y_{ij}$ after allowing for the effect of the fertiliser type.
+
+#### 2. Write the appropriate null and alternative hypotheses for the given research question.
+
+##### Solutions
+
+The null hypothesis and alternative hypothesis for testing the equality of multiple population means is (once we have defined as above)
+
+  $$ H_0: α_i = 0\ \ for\ all\ i $$
+  $$ H_a: α_i ≠ 0\ \ for\ at\ least\ one\ i $$
+
+or, equivalently:
+
+$H_0$: Fertiliser type A, B, or C has NO effect on the population mean tonnage of wheat reaped per two ha plot.
+
+$H_a$: Fertiliser type does affect the population mean tonnage of reaped per two 	 	hectare plot.
+
+#### 3. Perform a one way fixed effects ANOVA and reproduce the ANOVA table below.
+
+```{r echo=FALSE}
+data <- haven::read_sav('Lab 03 - Fertilizer.sav')
+data <- as.data.frame(data)
+jmv::ANOVA(formula=Tonnes ~ Type, data)$main
+```
+
+![](R.svg)
+
+Construct a model using the `lm()` function, and then pass this model to the `anova()` function. 
+
+In general, if our data is stored in an object called `data_object` say, that has variable names `response` and `predictor`, the `lm()` function gets used as follows: 
+```{r eval=FALSE}
+lm_1 = lm(response ~ predictor, data = data_object)
+```
+Because the objects `response` and `predictor` do not exist outside of the data frame object, we need to specify where `response` and `predictor` come from using `data = data_object`. We could omit the `data = data_object` command if we entered `response` and `predictor` directly as follows: 
+```{r eval=FALSE}
+lm_1 = lm(data_object$response ~ data_object$predictor)
+```
+The `$` charachter in `data_object$response` says, extract the `response` variable from the `data_object` data frame. You should practice using the `$` operator as well as using both methods for running the linear model. 
+
+*The first method above is preferred though. It makes it easier to perform use the* `leveneTest` *function later. You can simply enter the* `lm_1` *model object into the function*. 
+
+You then need to use the `anova()` function on the linear model object:
+```{r eval=FALSE}
+anova(lm_1)
+```
+
+
+![](v.svg)
+
+Analyses → ANOVA → ANOVA.
+
+##### Solutions
+
+
+```{r}
+model <- lm(Tonnes ~ Type, data)
+
+anova(model)
+```
+
+#### 4. Label each component of the ANOVA table. Indicate how the df, SS components, MS components, and F test statistic were calculated.
+
+  |                |  SS   | df |  MS   |   F  |  p   |
+  |----------------|-------|----|-------|------|------|
+  |<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|
+  | Between Groups | 0.076 |  2 | 0.038 | .392 | .684 |
+  | Within Groups  | 1.164 | 12 | 0.097 |
+  | Total          | 1.240 | 14 |
+
+##### Solutions
+
+
+  |                |  SS   | df |  MS   |   F  |  p   |
+  |----------------|-------|----|-------|------|------|
+  |<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|
+  | Between Groups | 0.076 | (Groups - 1) | (SS / df) | $F_{between} / F_{within}$ | .684 |
+  | Within Groups  | 1.164 | (N - Groups) | (SS / df) |
+  | Total          | 1.240 | (N - 1)   |
+
+  
+
+#### 5. Draw a diagram showing the value of the test statistic for this test and the associated p-value.
+
+##### Solutions
+
+
+![](Lab 03 - F.png)
+
+#### 6. Recall from STAT1070 the use of post-hoc testing. Is it appropriate to carry out post-hoc tests to compare group means in this scenario? If so, what test is most appropriate to identify which fertilisers differ in terms of the tonnes reaped and conduct the test?  If not appropriate, why not?
+
+##### Solutions
+
+
+No. Post-hoc tests are inappropriate as the result of the ANOVA test was NOT statistically significant. i.e there is no treatment effect so it is not appropriate to determine between which treatments there is a significant difference.
+
+#### 7. Although we should firstly test whether model assumptions hold, provide a concluding statement that would be appropriate to include in a report summarising the results of this research (assuming the assumptions hold).
+
+##### Solutions
+
+
+The fertiliser type used has no statistically significant effect on the population mean tonnes of wheat reaped (p = 0.684).
+
+OR
+
+There is no statistically significant difference in the population mean tonnes of wheat reaped for plots treated with fertiliser type A, B or C (p = 0.684).
+
+#### 8. What assumptions have you made in this analysis?
+
+NOTE: we intentionally focus on the conceptual understanding and then mechanics first since a focus on the assumptions is usually less appealing for students (so may lose interest) and are better understood after getting involved with the data and technique. HOWEVER, assumptions should be tested early!
+
+##### Solutions
+
+
+The assumptions are:
+
+ - Each of the three samples of 5 wheat yields for the fertiliser types A, B, and C can be considered a random sample from the population of possible wheat yields for plots treated with that particular fertiliser type and is independent of (unrelated to) any of the other samples.
+ - The population wheat yield measurements for each of the fertiliser types are normally distributed. (Note: The F-test has the same robustness against departures from normality as does the 2 sample t-test.)
+ - The (population) variance for each of the fertiliser types are the same. That is, 
+ - Random allocation of plots to the different fertiliser types
+
+#### 9. Test the Equality of Variances
+
+We can test the equality of variances with the Levene's test
+
+![](R.svg)
+
+In are the function `leveneTest()` is available from the `car` package. You can pass it the model we created in question 3. Note that by default `leveneTest()` uses the median rather than the mean. To be consistent with other software, provide the `center='mean'` argument)
+
+![](v.svg)
+
+Using the ANOVA you should already have open (we created in question 3), you'll find an option for Homogeneity tests under the 'Assumption Checks' section. ("Homogeneity of variances" is another name for "Equality of variances").
+
+##### Solutions
+
+
+Note the ratio of largest standard deviation to smallest. The 'rule of thumb' regarding the ANOVA equality of variance assumption suggests that as long as the largest standard deviation is less than twice the smallest standard deviation ANOVA will still give approximately correct results. In this case the largest is 0.3647, the smallest 0.2236, suggesting ANOVA will provide reliable results.
+
+Or more formally:
+
+$H_0: \sigma_1 = \sigma_2 = \sigma_3$
+
+$H_a:$ not all are equal  (NOTE: NOT THE SAME AS SAYING 'all are not equal')
+
+```{r}
+leveneTest(model, center='mean')
+```
+
+p = 0.515  so fail to reject null; data are consistent with population variances all equal
+
+Welch's test is a modification of the one-way ANOVA test allowing for unequal variances across groups.
+
+IN THE EVENT THAT THE HOMOGENIETY OF VARIANCES IS REJECTED WE MAY THEN CONSIDER THE ABOVE 'ROBUST' TESTS RE THE MEANS; HOWEVER IN THIS SITUATION THAT IS NOT REQUIRED.
+
+#### 10. Explain what a residual represents and/or how it is obtained.
+
+##### Solutions
+
+
+In general, a residual is simply the difference between an actual response measurement and the value predicted by the fitted model for the corresponding set of explanatory variables. For one way ANOVA this is just the difference between the measurement and its corresponding group mean. Thus the jth residual in the ith group is:
+
+$$ e_{ij} = Y_{ij} - \hat Y_{ij} $$
+
+$$ e_{ij} = Y_{ij} - \bar Y_{i} $$
+
+where the $\hat \space$ symbol indicates a predicted value.
+
+#### 11. Test the normality of the residuals using a Q-Q plot and Shapiro-Wilk goodness of fit tests.
+
+![](R.svg)
+
+Use the `qqPlot()` function from the `car` package, on the model we've already created, and the `shapiro.test()` function is available for performing Shapiro-wilk. However, `shapiro.test()` can not operate on a lm object, so we need to first extract the residuals the model, and *then* pass these to `shapiro.test`.
+
+```{r eval=FALSE}
+resids <- residuals(model)
+shapiro.test(resids)
+```
+
+![](v.svg)
+
+You'll find options for *Q-Q plot* and *Shapiro-Wilk* under the *Assumption Checks* section.
+
+##### Solutions
+
+
+###### Q-Q Plot
+
+```{r}
+qqPlot(model)
+```
+
+Q-Q plot does not identify obvious non-normality; however, this is difficult to gauge with such small data (5 per group).
+
+###### Shapiro-Wilk
+
+$H_0:$ Residuals are normally distributed
+
+$H_a:$ Residuals are NOT normally distributed
+
+```{r}
+resids <- residuals(model)
+shapiro.test(resids)
+```
+
+Data consistent with residuals coming from a normal distribution since p = 0.939
+ 
+#### 12. Is this study observational or experimental? If you were the researcher responsible for this study, what other issues might you be concerned about?
+
+##### Solutions
+
+
+This is an experimental study as we are imposing a treatment, the fertiliser type, and seeing what effect it has on the response, wheat yield, AND critically, although not stated, the plots are randomly allocated to the fertiliser type.
+
+It isn't stated in the description of the experiment but random allocation of plots to the different fertiliser types would be absolutely critical. There will always be some plots where the wheat yield will be higher than in others. Random allocation means that no particular fertiliser type is more likely than any other to have the 'good' plots. i.e. chance will help even out the distribution of good plots (and bad plots) among the three fertiliser types. If it is known beforehand that certain plots give bigger yields then we can do better than just rely on chance. Blocking could be used to conduct an even better experiment. For example, suppose some of the plots naturally got more water and sun than other plots and were therefore expected to give greater yield. We would split the plots by this characteristic and randomly allocate plots to fertiliser type within the groups. Thus we could be sure that we didn't bias our results by allocating too many of the good plots to type A fertiliser for example. Box et al. (1978) recommends that experimenters "Block what you can, randomise what you can't".
+
+Other possible issues to be concerned about would be to ensure that there was no spreading of the effect of a particular fertiliser type across a plot boundary to affect another plot, careful control of other variables that might affect the response, etc.
+
+## 3.2 One-way Fixed Effects ANOVA and Power
+
+In the fertiliser example, we concluded that the fertiliser type used has no statistically significant effect on the mean wheat yield (p = 0.684). This does not necessarily mean that there is no effect. It just means that any actual effect of the fertiliser type is too small to be distinguishable from the inherent variability of wheat yield; at least with this sample size. This refers to the 'size of the effect' one is trying to pick up.
+
+#### 1. Consider the planning stage of this experiment. If you were to conduct an experiment you would want to know prior to the implementation if your experiment was likely to identify a certain effect size, i.e., the power you have to identify a difference (of a certain size).
+
+Suppose that the effect of fertiliser type A and B were expected to be fairly similar, resulting in a yield of about 3.0 tonnes wheat per 2 ha plot, with fertiliser type C expected to give a yield of about 2.8 tonnes wheat per 2 ha plot. In order to determine power, we also need an expected variation in the yield for a given fertiliser type. Let's assume that yields will have a standard deviation of 0.3.
+
+![](R.svg)
+
+There are several ways to calculate power in R. Two usefull functions are the `power.anova.test()` and `pwr.anova.test()` functions. Depending on what information you have, you may choose to use one over the other. 
+
+Different software will ask you to provide the above information in different ways (if you used jpower last week, it wanted effect-size for example); in the case of `power.anova.test()` it requires *between variance* and *within variance*. All of these are equivalent ways to describe the 'signal to noise'. It's a bit of a pain, but all these approaches produce consistent results.
+
+To calculate the power with the `power.anova.test()` function, we provide the following arguments:
+
+  - `groups` -- the number of groups
+  - `n` -- the number of observations in each group
+  - `between.var` -- the variance between groups
+  - `within.var` -- the variance within groups
+
+`groups` and `n` are hopefully straight forward. `between.var` is the variance between groups, and can is calculated by taking the variance of the group means, i.e. `var(c(3, 3, 2.8))`. `within.var` is the variance within groups, and is provided in the question; a standard deviation of 0.3. However, the `within.var` argument requires us to provide this value as a variance. Recall how to convert a standard deviation to a variance (Hint: variance is $sd^2$). If you were given data from a pilot study, you can calculate an estimate of the `within.var` by calculating the pooled standard deviation. 
+
+*Remember* though that a power calculation is only an estimate. To know the exact power we need to know the values of the population parameters, $\mu_1, \mu_2, ... \sigma^2$. We often estimate these by what we expect, or hope, or by what we see in pilot data. It may be useful to be conservative with your power calculation by arbitrarily increasing your within variance estimate, or even plotting your power against the other factors that effect it.  
+
+```{r, eval=FALSE}
+power.anova.test(
+  groups = 3,
+  n = 5,
+  between.var = var(c(3, 3, 2.8)),
+  within.var = 0.3^2)
+```
+
+The `pwr.anova.test` function requires up to provide the effect size. The effect size is the ratio of the between group standard deviation and the within group standard deviation. That is $f = \frac{\sigma^*_{\text{between}}}{\sigma_{\text{within}}}$. The star on the numerator is because when calculating this value, we actually use the population variance formula, that is, we divide by $k$ groups, rather than $k-1$. You will see below I muliply the variance calculated by $\frac{k}{k-1}$ to change the variance calculation to have a divisor of $k$. 
+
+```{r, eval=FALSE}
+k = 3
+sigma_between = sqrt(var(c(3, 3, 2.8))*(k-1)/k)
+sigma_within = 0.3
+
+pwr.anova.test(k = k, n = 5, f = sigma_between/sigma_within, sig.level = 0.05)
+```
+
+Another thing to note is how we actually calculate the within group standard deviation. In this question we are provided with this number but in practice we have to come up with an estimate of this from some pilot data. The best method is to use the pooled variance formula: 
+$$s^2_p = \frac{\sum_{i=1}^{k} (n_i - 1)s_i^2}{\sum_{i=1}^{k} (n_i - 1)} $$ 
+where $s_i^2$ is the sample variance of the ith group. When your pilot data group sample sizes are large, you may simply take the average of the group variances. 
+
+![](v.svg)
+
+Previously we've used *jpower* for power calculations, however *jpower* does not provide power calculations for ANOVA designs. You can continue these exercises using the *Rj Editor* (You can install the *Rj Editor* from the jamovi library; Analyses → Modules → jamovi Library, scroll down to *Rj Editor* and select *install*. Once installed, you can open the editor with; Analyses → R → Rj Editor).
+
+Once you've got the Rj Editor open, you can simply copy and paste the R code provided above into the editor, and press the 'play' button to run it -- but make sure you read through the description above so you understand what this R code does!
+
+![](GPower.png)
+
+A very useful and *powerful* software for power calculations is GPower. This is free software that is available [here](http://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower.html). 
+
+##### Solutions
+
+
+```{r, echo=FALSE}
+power.anova.test(
+  groups = 3,
+  n = 5,
+  between.var = var(c(3, 3, 2.8)),
+  within.var = 0.3^2)
+```
+
+Below we have a power calculation for several values of the within variance which is then plotted. 
+
+```{r, eval=TRUE}
+within.var = seq(0.05,0.4,0.01)
+POW_calc = power.anova.test(
+  groups = 3,
+  n = 5,
+  between.var = var(c(3, 3, 2.8)),
+  within.var = within.var^2)
+plot(POW_calc$power~within.var, xlab = "Within SD", ylab = "Power", type = "l")
+```
+
+
+#### 2. Repeat the above replacing 3, 3 and 2.8 with  1, 1, 0.8 respectively. Compare the 'Difference in Means' values and the 'Power v Sample Size' graphs: what do you notice?
+
+##### Solutions
+
+
+```{r, eval=FALSE}
+power.anova.test(
+  groups = 3,
+  n = 5,
+  between.var = var(c(1, 1, 0.8)),
+  within.var = 0.3^2)
+```
+
+Same results: the important feature is the 'relative difference' in the group means (3, 3, 2.8 or 1, 1, 0.8)
+
+
+#### 3. Comment on the experimental design to detect differences in mean wheat yields of this size (3, 3, 2.8).
+
+What might one review to assess the experimental design (both prior to the experiment and after the experiment was conducted)?
+ 
+##### Solutions
+
+
+We should consider the power of the ANOVA test, given the sample size (and sig level, diff in means, the data to confirm that the means and standard deviation estimates used in the power calculations are fairly similar to the sample means and sample standard deviation obtained in the actual experiment.
+
+The power for detecting differences in means of this order of magnitude with a sample size of 15 (as per original experiment) is very low, only about 14.7%.
+
+Therefore this would not have been a good experimental design if the aim was to detect an effect this small.
+
+The mean yields for fertilisers A, B and C to be 3, 3 and 2.8 are reflected in the data (2.94, 2.96, 2.8) so the power calculation seems to have been founded on good estimates of the effect to pick up (see output below).
+
+```{r}
+jmv::descriptives(
+  data,
+  Tonnes,
+  Type,
+  n=FALSE,
+  missing=FALSE,
+  median = FALSE,
+  min = FALSE,
+  max = FALSE)
+```
+
+
+#### 4. What is the power for a total sample size of 48 plots?
+
+##### Solutions
+
+
+```{r}
+power.anova.test(
+  groups = 3,
+  n = 16,
+  between.var = var(c(3, 3, 2.8)),
+  within.var = 0.3^2)
+```
+
+Power is about 45% for a total sample size of 48 plots
+
+#### 5. Suppose we simplify this experiment, and only have two comparison groups corresponding to fertiliser type A and C. Using the same expected difference in mean wheat yield for these two fertiliser types, what is the power now for a total sample size of 48 plots? What does this suggest about the effect of the number of comparison groups on power?
+
+##### Solutions
+
+
+```{r}
+power.anova.test(
+  groups = 2,
+  n = 24,
+  between.var = var(c(3, 2.8)),
+  within.var = 0.3^2)
+```
+
+The power for the same total sample size of 48 plots is now about
+62% (compared with 45% when all three groups were simultaneously considered). This suggests that considering fewer comparison groups makes it easier (higher power) to detect differences. Intuitively this makes sense as the total sample size (48) remains the same but the estimates within each group will be more precise as a consequence of each group having higher numbers of replicates (24 in each of two groups, as compared to 16 in each of three groups).
+
+Eliminating one of the comparison groups increases power.
+
+
+## 3.3 Assumptions and Multiple Comparisons
+
+A researcher wanted to test a new approach to increase vocabulary among children with autism. For the experiment, 36 children were randomly assigned to one of three different treatments (Community referrals with No additional Intervention, Low-Intensity Intervention, and High-Intensity Intervention). After a fixed period of time, the increase in the children's vocabulary was measured (the number of additional words spoken over a specified time interval). The results are presented in the following table and in the file *Lab 03 - Vocab.sav*.
+
+  |  No  | Low  | High |
+  |------|------|------| 
+  |  23  |  23  |  38  |
+  |  25  |  20  |  27  |
+  |  21  |  25  |  27  |
+  |  22  |  21  |  29  |
+  |  21  |  22  |  26  |
+  |  22  |  23  |  29  |
+  |  20  |  21  |  27  |
+  |  23  |  20  |  30  |
+  |  19  |  19  |  28  |
+  |  22  |  20  |  27  |
+  |  19  |  22  |  26  |
+  |  21  |  21  |  29  |
+  
+#### 1. State the null and alternative hypotheses for testing.
+
+##### Solutions
+
+Since the researcher wishes to test the effect of three new treatments (no, low, high) to increase a child's vocabulary, let
+
+ - $\mu_N$ represent the population mean increase (in words) of a child's vocabulary when no additional intervention (no) has been given.
+ - $\mu_L$ represent the population mean increase (in words) of a child's vocabulary when low-intensity intervention (low) has been given.
+ - $\mu_H$ represent the population mean increase (in words) of a child's vocabulary when high intensity intervention (high) has been given.
+
+Then the null and alternative hypotheses are
+
+  $H_0$ : $\mu_N = \mu_L = \mu_H$
+  
+  $H_a$ : at least one population mean increase in vocabulary measurement is
+different
+
+NOTE: there are many ways of stating the hypotheses, but you MUST be consistent and define the notation used.
+
+#### 2. Perform an ANOVA on the data. What is the value of the test statistic and the corresponding p-value?
+
+It should be clear that *Increase* is the dependent variable.
+
+![](R.svg)
+
+Construct a model using the `lm()` function, and then pass this model to the `anova()` function.
+
+![](v.svg)
+
+Analyses → ANOVA → ANOVA.
+
+##### Solutions
+
+  
+
+```{r}
+data <- haven::read_sav('Lab 03 - Vocab.sav')
+data <- as.data.frame(data)
+data$Group <- factor(data$Group, levels=c('No', 'Low', 'High'))
+
+model <- lm(Increase ~ Group, data)
+anova(model)
+```
+
+From the output, the test statistic is F = 63.601 and the corresponding p-value is < 0.001. Thus there is very strong evidence against the null hypothesis.
+
+#### 3. Why is it appropriate to carry out post-hoc tests to compare group means? Which test is most appropriate to test whether those not receiving additional treatment (No Intervention) were different to those receiving Low and High Intensity Interventions? Carry out this test.
+
+Hint: the post-hoc test we want is a *Dunnett's test*.
+
+![](R.svg)
+
+The code to perform this in R is actually a bit involved:
+
+```{r}
+library(multcomp)
+
+data <- as.data.frame(data)
+data$Group <- factor(data$Group, levels=c('No', 'Low', 'High'))
+
+model <- lm(Increase ~ Group, data)
+aovObject <- aov(model)
+dun <- glht(aovObject, linfct=mcp(Group="Dunnett"))
+summary(dun)
+```
+
+![](v.svg)
+
+There's no way to perform a Dunnett's test in jamovi, so just refer to the R results above.
+
+##### Solutions
+
+  
+
+The ANOVA F test indicates that there is a difference in population mean increase in vocabulary measurements somewhere among the three group means. Hence it is appropriate to carry out a post-hoc test to determine exactly where the difference(s) lies.
+
+Since we have a control group (i.e., those children where no additional intervention took place) a Dunnett's test is appropriate, rather than Tukey's test.
+
+```{r echo=FALSE}
+library(multcomp)
+
+data <- as.data.frame(data)
+data$Group <- factor(data$Group, levels=c('No', 'Low', 'High'))
+
+model <- lm(Increase ~ Group, data)
+aovObject <- aov(model)
+Dunnet <- glht(aovObject, linfct=mcp(Group="Dunnett"))
+summary(Dunnet)
+```
+
+There is very strong evidence that the population mean vocabulary improvement in the High intervention group is higher than the population mean vocabulary improvement for the No intervention group (p-value = 0.000) whereas the population mean vocabulary improvement in the Low intervention group is not statistically significantly different from the No intervention group (p-value = 0.9878).
+
+#### 4. Whenever an ANOVA is performed certain assumptions most hold. Perform a test for unequal variances.
+
+![](R.svg)
+
+First create side-by-side box-plots and see if it looks like the groups have similar variances, then follow this up with a more formal *Levene's test*; use the `leveneTest()` function from the `car` package. Note that you need to pass the `center='mean'` argument to the `leveneTest()` function to get a "normal" Levene's test.
+
+![](v.svg)
+
+Using the ANOVA you created in question 2, in the Assumption Checks section, you'll find a checkbox for *Homogeneity tests* (*Equality of variances* is sometimes called *Homogeneity of variances*). Follow this up by producing side-by-side box-plots using the Analyses -> Explore -> Descriptives analysis. Do the two results correspond?
+
+##### Solutions
+
+  
+
+```{r}
+library(car)
+leveneTest(Increase ~ Group, data, center='mean')
+
+plot(x=data$Group, y=data$Increase)
+```
+
+We can see that although the high-intensity intervention group has a smaller sample standard deviation than the other two groups there isn't a large difference.
+The ratio of largest standard deviation to smallest is about 1.3 so applying the rule of thumb suggests the ANOVA assumption of equality of population variances is not to be rejected (Moore and McCabe (2009) suggest that as long as the largest standard deviation is less than twice the smallest standard deviation ANOVA will still give approximately correct results.)
+
+The Levene test reports a large p-value 0.741 indicating that the null hypothesis (of equal population variances in each group) should not be rejected.
+
+
+#### 5. Test the normality of the residuals using Q-Q plot and Shapiro-Wilk goodness of fit tests.
+
+![](R.svg)
+
+Extract the residuals from the model you created in question 2 with the `residuals()` function. Create a Q-Q plot with the `qqPlot()` function from the `car` package, and test for normality with the `shapiro.test()` function.
+
+![](v.svg)
+
+Using the ANOVA from question 2, under the *Assumption Checks* section, you'll find checkboxes for a *Q-Q plot* and a *Shapiro-Wilk test*.
+
+##### Solutions
+
+  
+
+```{r eval=FALSE}
+library(car)
+resids <- residuals(model)
+qqPlot(resids)
+shapiro.test(resids)
+```
+
+```{r echo=FALSE}
+resids <- residuals(model)
+qqPlot(resids)
+```
+
+Since the residuals lie on the straight line there is evidence that the error terms, for each of the three groups, are normally distributed. However, such a method does not provide a formal test of the assumption, just a visual aid.
+
+```{r echo=FALSE}
+shapiro.test(resids)
+```
+
+Shapiro-Wilk test has p-value = 0.257, so fail to reject null hypothesis. Conclude there is not enough evidence to reject the null hypothesis and it appears the assumption of normality of the residuals is valid.
+
+#### 6. Write a statement summarising the overall results of your analysis that would be appropriate for inclusion in a report.
+
+##### Solutions
+
+  
+
+The one-way fixed effects analysis of variance provided strong evidence against the null hypothesis (p < 0.001) indicating that the population mean of vocabulary improvement is not equal across the three intervention groups. Dunnett's test confirmed that the population mean vocabulary improvement in the High intensity intervention group was statistically significantly higher than the population mean improvement for the for the No intervention group (p-value < 0.001); whilst the population mean vocabulary improvement in the Low intensity intervention was not statistically significantly higher than the population mean improvement for the for the No intervention group (p-value = 0.99).
+
+#### 7. It was suggested that children in the No Intervention group were still exposed to community referrals and so should NOT be considered as part of a control group. Suppose that it was of interest to compare the effects of the three treatment conditions to each other WITHOUT assuming the "No intervention group" to be the control group. Conduct the appropriate test to determine which of the three groups differed from one another in terms of mean vocabulary improvement.
+
+![](R.svg)
+
+```{r}
+aovObject <- aov(model)
+TukeyHSD(aovObject)
+```
+
+![](v.svg)
+
+Look under the *Post-hoc* section. Add the variables from the left to the right that you want post-hoc tests for, then choose the correction to apply to these comparisons.
+
+##### Solutions
+
+  
+
+If the no intervention group is not treated as a control group, then the post-hoc test that is most appropriate is the Tukey-Kramer HSD method.
+
+By considering the Tukey-Kramer HSD method (often just called *Tukey*):
+
+ - There is a statistically significant difference in the vocabulary of those who were in the high-intervention group and the low-intervention group (p < 0.001)
+ - There is a statistically significant difference in the vocabulary of those who were in the high-intervention group and the no-intervention group (p < 0.001)
+ - There is no statistically significant difference in the vocabulary of those who
+were in the no-intervention group and the low-intervention group (p= 0.991)
+
+
