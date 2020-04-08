@@ -1,6 +1,6 @@
 
 install:
-  - ps: Invoke-WebRequest https://cloud.r-project.org/bin/windows/base/R-3.6.2-win.exe -OutFile R-win.exe
+  - ps: Invoke-WebRequest https://cloud.r-project.org/bin/windows/base/R-3.6.3-win.exe -OutFile R-win.exe
   - ps: Start-Process -FilePath ./R-win.exe -ArgumentList "/VERYSILENT /DIR=C:\R" -NoNewWindow -Wait
   - ps: $env:PATH += ";C:\R\bin\x64"
   - cinst pandoc
@@ -24,12 +24,12 @@ artifacts:
   - path: '*.zip'
     name: zip files
 
-deploy:
-    provider: S3
-    access_key_id:
-        secure: Gp7VOcB0s+Bjx7u6HUXhESK3ybGg1zAalg51NEUge8w=
-    secret_access_key:
-        secure: TIXTOqvte0Ve7OEOUW132pAsJBA/GB6dpbWGNk2qopiYyzruzQxGoENG6iCbjQ+1
-    bucket: uon-stat2000
-    region: us-east-1
-    set_public: true
+#deploy:
+#    provider: S3
+#    access_key_id:
+#        secure: Gp7VOcB0s+Bjx7u6HUXhESK3ybGg1zAalg51NEUge8w=
+#    secret_access_key:
+#        secure: TIXTOqvte0Ve7OEOUW132pAsJBA/GB6dpbWGNk2qopiYyzruzQxGoENG6iCbjQ+1
+#    bucket: uon-stat2000
+#    region: us-east-1
+#    set_public: true
