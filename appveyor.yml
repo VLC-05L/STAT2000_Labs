@@ -24,12 +24,12 @@ artifacts:
   - path: '*.zip'
     name: zip files
 
-#deploy:
-#    provider: S3
-#    access_key_id:
-#        secure: Gp7VOcB0s+Bjx7u6HUXhESK3ybGg1zAalg51NEUge8w=
-#    secret_access_key:
-#        secure: TIXTOqvte0Ve7OEOUW132pAsJBA/GB6dpbWGNk2qopiYyzruzQxGoENG6iCbjQ+1
-#    bucket: uon-stat2000
-#    region: us-east-1
-#    set_public: true
+deploy:
+    provider: S3
+    access_key_id:
+        secure: HEhOfs5oEuCU4xgi/Wx7fv5UCktGQyG9zoRqYGcObKI=
+    secret_access_key:
+        secure: Cl+DccBdfvPAQpuzOzHlkbBF6tNqW7/eSOMKlW8r/zyWt3S0eYvL0h/Poar4DbyI
+    bucket: uon-stat2000-labs
+    region: us-east-2
+    set_public: true
