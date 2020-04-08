@@ -3,6 +3,12 @@ title: "Power for STAT2000 Group Assignment"
 output: html_document
 ---
 
+```{r echo=FALSE}
+if (!require("pwr2")) install.packages("pwr2")
+library("pwr2")
+```
+
+
 This document provides some tips and approaches you might use when calculating power for your group assignment proposal. You must justify the samples sizes you intend to use in your group assignment proposal.
 
 In order to calculate power, there can be some difficulty in coming up with the *expected* difference between the group means, and the *expected* variation in the data. There are three ways we can do this:
@@ -52,7 +58,6 @@ install.packages('pwr2')
 To calculate power, you can use the `pwr.2way()` function as follows:
 
 ```{r}
-library(pwr2)
 
 pwr.2way(
     a = 2,
