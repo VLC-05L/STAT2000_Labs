@@ -1,7 +1,21 @@
 ---
-title: "Lab 8 (Week 9)"
+title: "STAT2000: Applied Statistics and Research Methods"
+date: "Semester 1, 2020"
 output: 
   html_document: 
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    self_contained: true
+    theme: default
+    include:
+      after_body: ./styles.js
+    pandoc_args: [
+      "--number-offset", "8,0,0,0",
+      ]
     css: Labs.css
 params:
   inc_solu:
@@ -14,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 loadNamespace('haven')
 
-data <- haven::read_sav('Lab 08 - Stress.sav')
+data <- haven::read_sav('Lab_08_Stress.sav')
 data <- as.data.frame(data)
 
 ```
