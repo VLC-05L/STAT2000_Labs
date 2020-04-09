@@ -23,6 +23,8 @@ artifacts:
     name: png files
   - path: '*.zip'
     name: zip files
+  - path: '*.jpg'
+    name: jpg files
 
 deploy:
     provider: S3
