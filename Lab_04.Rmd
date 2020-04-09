@@ -1,7 +1,21 @@
 ---
 title: "STAT2000: Applied Statistics and Research Methods"
+date: "Semester 1, 2020"
 output: 
   html_document: 
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    self_contained: true
+    theme: default
+    include:
+      after_body: ./styles.js
+    pandoc_args: [
+      "--number-offset", "4,0,0,0",
+      ]
     css: Labs.css
 params:
   inc_solu:
@@ -19,7 +33,7 @@ if ( ! require('car'))
 if ( ! require('multcomp'))
   install.packages('multcomp')
 
-data <- haven::read_sav('Lab 04 - Activity.sav')
+data <- haven::read_sav('Lab_04_Activity.sav')
 data <- as.data.frame(data)
 ```
 
@@ -31,9 +45,9 @@ data <- as.data.frame(data)
 </style>
 ```
 
-# Lab 4 - Week 5
+## Lab 4 - Week 5 {-}
 
-#### Recall Lecture 3 and 4:
+### Recall Lecture 3 and 4: {#recall -}
 
  - ANOVA Assumptions
  - Diagnostics 
@@ -41,7 +55,7 @@ data <- as.data.frame(data)
  - Comparing Means
  
 
-### Lab Objectives
+### Lab Objectives {-}
 
 On completion of this lab you will be able to:
 
@@ -54,39 +68,40 @@ On completion of this lab you will be able to:
  - Identify when it is appropriate to apply orthogonal contrasts.
 
 
-### Overview
+### Overview {-}
 
 In the Week 4 lecture we discussed the assumptions underlying oneway fixed effects ANOVA, and how we may check or test these (diagnose) and what action we may take to remedy the situation when assumptions don't hold (remedial measures). We also considered the additional testing, for differences between groups, once the ANOVA identifies that at least one population mean differs (post-hoc tests or multiple comparisons).
 
-#### Data Files
+### Data Files {-}
 
 ```{r echo=FALSE}
-xfun::embed_file("Lab 04 - Activity.sav")
+xfun::embed_file("Lab_04_Activity.sav")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 04 - Learning.sav")
+xfun::embed_file("Lab_04_Learning.sav")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 04 - Box_Office_1.csv")
+xfun::embed_file("Lab_04_Box_Office_1.csv")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 04 - Box_Office_2.csv")
+xfun::embed_file("Lab_04_Box_Office_2.csv")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 04 - Box_Office_3.csv")
+xfun::embed_file("Lab_04_Box_Office_3.csv")
 ```
 
 
+## Transformation of the Response Variable
 
-## 4.1 Transformation of the Response Variable
+### THC and Rats
 
-The file *Lab 04 - Activity.sav* contains data from a study by Conti and Musty (1984) on the activity levels in rats following administration of different levels of THC, the active ingredient in marijuana. The activity units, based on an arbitrary scale, are reported for each rat over the 10 minute post-injection period.
+The file *Lab_04_Activity.sav* contains data from a study by Conti and Musty (1984) on the activity levels in rats following administration of different levels of THC, the active ingredient in marijuana. The activity units, based on an arbitrary scale, are reported for each rat over the 10 minute post-injection period.
 
-#### 1. Analyse the data. Ensure you test for equality of variance across treatment groups and whether the residuals are normally distributed. Report conclusions but do not consider multiple comparisons at this stage.
+#### Analyse the data. Ensure you test for equality of variance across treatment groups and whether the residuals are normally distributed. Report conclusions but do not consider multiple comparisons at this stage. {-}
 
 ![](R.svg)
 
@@ -96,10 +111,12 @@ In general, if our data is stored in an object called `data_object` say, that ha
 ```{r eval=FALSE}
 lm_1 = lm(response ~ predictor, data = data_object)
 ```
+
 Because the objects `response` and `predictor` do not exist outside of the data frame object, we need to specify where `response` and `predictor` come from using `data = data_object`. We could omit the `data = data_object` command if we entered `response` and `predictor` directly as follows: 
 ```{r eval=FALSE}
 lm_1 = lm(data_object$response ~ data_object$predictor)
 ```
+
 The `$` charachter in `data_object$response` says, extract the `response` variable from the `data_object` data frame. You should practice using the `$` operator as well as using both methods for running the linear model. 
 
 *The first method above is preferred though. It makes it easier to perform use the* `leveneTest` *function later. You can simply enter the* `lm_1` *model object into the function*. 
@@ -110,14 +127,11 @@ anova(lm_1)
 ```
 
 
-
 ![](v.svg)
 
 Analyses → ANOVA → ANOVA. It should be clear which is the dependent variable and which is the explanatory factor. Under the *Assumption Checks* section you'll find options for testing equality of variances and normality.
 
 ##### Solutions
-
- 
 
 ```{r}
 library(car)
@@ -128,9 +142,9 @@ anova(model)
 
 $H_0$: population mean activity levels are equal for the five groups (p < .001), so reject the null and conclude that at least two of the population mean activity levels in the rats differ.
 
-###### Assumptions
+**Assumptions**
 
-Normality
+*Normality*
 
 Consider the residuals as a whole. (note that the means of the residuals are always zero in each group, by the definition of the least squares estimates, if the equal variance assumption is correct, then each group’s residuals have the same mean and variance, so combining them to assess the shape of their distribution makes sense)
 
@@ -147,7 +161,7 @@ Fail to reject null since p=0.844 and conclude the residuals are consistent with
 qqPlot(resids)
 ```
 
-Equality of variances
+*Equality of variances*
 
 ```{r}
 leveneTest(model)
@@ -159,7 +173,7 @@ Rule of thumb violated (half highest std dev 153 > twice lowest std dev 58)
 
 p = 0.023 from formal test, hence reject null at 5% significance level and hence conclude that the population variances are not equal for all five groups
 
-#### 2. Graph the residuals against the predicted values. What does your residual by predicted plot show? Explain why this is relevant to your original ANOVA analysis.
+#### Graph the residuals against the predicted values. What does your residual by predicted plot show? Explain why this is relevant to your original ANOVA analysis. {-}
 
 ![](R.svg)
 
@@ -178,8 +192,6 @@ There's no easy way to perform this in jamovi, but you can paste the preceding R
 
 ##### Solutions
 
- 
-
 ```{r echo=FALSE}
 model <- lm(Y ~ TrmntGrp, data)
 resids <- residuals(model)
@@ -191,11 +203,9 @@ There is a fairly clear pattern in the residual by predicted plot; the variation
 
 A transformation of the response variable can often be useful in such cases. Considering the pattern in the residuals is help in determining which transformation to use.
  
-#### 3. Consider observation 33 in the data set; Y = 376 is the response variable value for this observation in the 0.5 $\mu g$ dosage group. Explain how the residual and predicted values have been calculated for this observation and describe these values more generally, for any observation.
+#### Consider observation 33 in the data set; Y = 376 is the response variable value for this observation in the 0.5 $\mu g$ dosage group. Explain how the residual and predicted values have been calculated for this observation and describe these values more generally, for any observation. {-}
 
 ##### Solutions
-
- 
 
 The one-way ANOVA model allows for normally distributed errors around a group mean. The value predicted by the model for a given/observed data value is simply the sample mean of the group from which the observation arose (the estimate of its group mean). For the 0.5 $\mu g$ dosage group the sample mean is 390.56; hence this is the corresponding predicted value for the observed value of 376. In fact 390.56 is the predicted value for all the observed data coming from this particular group.
 
@@ -203,7 +213,7 @@ The corresponding residual is the difference between the observed and predicted 
 
 $$ 376 - 390.56 = -14.56 $$
     
-#### 4. Transform the data to overcome the issue of non-constant variance
+#### Transform the data to overcome the issue of non-constant variance. {-}
 
 Transformation of the response variable can be a useful remedial measure when assumptions of equal variance and/or normally distributed residuals are not met. The logarithmic transformation, either to the base 10 or base e (natural logarithms), is commonly used when residuals are right skewed or the standard deviation is proportional to the mean.
 
@@ -221,7 +231,7 @@ Create a new computed variable called `LogY` which is the log transformed versio
 
 (Note: It turns out computed variables can do a lot more than just a log transform; if you click the small fx button you can get a full list of all the functions available).
 
-#### 5. Run the ANOVA using Log(Y) as the response instead of Y. How does this new model compare to your previous ANOVA analysis? Are the assumptions met for this model?
+#### Run the ANOVA using Log(Y) as the response instead of Y. How does this new model compare to your previous ANOVA analysis? Are the assumptions met for this model? {-}
 
 ```{r eval=FALSE}
 logModel <- lm(LogY ~ TrmntGrp, data)
@@ -232,10 +242,9 @@ shapiro.test(logResids)
 qqPlot(logResids)
 leveneTest(logModel)
 ```
-  
-##### Solutions
 
- 
+
+##### Solutions
 
 ```{r echo=FALSE}
 data$LogY <- log(data$Y)
@@ -249,7 +258,7 @@ The new model still indicates that the THC dosage has a statistically significan
 
 Transforming the response variable impacts upon our interpretations. We are able to reverse the transformation when reporting final figures
 
-###### Assumptions
+**Assumptions**
 
 Normality
 
@@ -276,7 +285,7 @@ leveneTest(logModel)
 Rule of thumb violated (highest std dev .326 < twice lowest std dev .207)
 p = 0.204 from formal test, hence fail to reject null at 5% significance level and hence conclude that the population variances of the log of activity levels are not statistically significantly different from one another.
 
-#### 6. Consider the Residual by Predicted Plot. How does this compare to the Residual by Predicted Plot obtained in the original analysis?
+#### Consider the Residual by Predicted Plot. How does this compare to the Residual by Predicted Plot obtained in the original analysis? {-}
 
 ```{r}
 logResids <- residuals(logModel)
@@ -290,7 +299,7 @@ plot(logPreds, logResids)
 
 The Residual by Predicted Plot in the output using the transformed data shows a more constant spread of the residuals for each of the groups compared with the corresponding plot for the original data (without consider the transformation). This supports the results we obtained from the formal test and indicates that the logarithmic transformation has been successful in changing the response variable into a form that satisfies the equality of variance assumption for ANOVA.
 
-#### 7. Suppose the researchers decided that post-hoc multiple comparisons were appropriate. Comment on why they would use this methodology over planned comparisons. What would be the advantage of using planned comparisons?
+#### Suppose the researchers decided that post-hoc multiple comparisons were appropriate. Comment on why they would use this methodology over planned comparisons. What would be the advantage of using planned comparisons?  {-}
 
 ##### Solutions
 
@@ -298,7 +307,7 @@ The Residual by Predicted Plot in the output using the transformed data shows a 
 
 The researcher must not have had in mind planned comparisons before collecting the data or undertaking the analysis. They therefore can only undertake unplanned comparisons. The advantage of using planned comparisons is that you are likely to make less comparisons, and can then spread your overall type 1 error risk over less comparisons, giving you a greater ability to identify a difference. In addition to this we can perform comparisons on combinations of treatment groups.
 
-#### 8. Whenever possible it is preferable to perform an analysis using the original (not transformed) units. 
+#### Whenever possible it is preferable to perform an analysis using the original (not transformed) units.  {-}
 
  1. Return to the original data and perform a multiple comparison. 
  2. Use the transformed data to perform a multiple comparison
@@ -319,8 +328,6 @@ You'll find the option to perform post-hoc tests for the different levels of `Tr
 
 ##### Solutions
 
- 
-
 ```{r}
 aovObject <- aov(model)
 TukeyHSD(aovObject)
@@ -331,18 +338,18 @@ TukeyHSD(logAovObject)
 
 Transforming the response variable probably doesn't make a lot of difference in this case if we are just trying to demonstrate that the THC dosage has an effect on the activity levels of the rats. However there are some differences in multiple comparisons and in confidence interval estimates of the differences in group means in this case.
 
-#### 9. Summarise your findings
+#### Summarise your findings. {-}
 
 ##### Solutions
-
- 
 
 A logarithmic transformation of the activity scores was trialled because the raw activity scores suggested unequal variances across the comparison groups, violating of one of the fundamental ANOVA assumptions. This transformation was successful in eliminating the unequal variance problem but residual analysis for the transformed data suggested a possible problem with the assumption of normally distributed data (p = 0.059 for Shapiro-Wilk test). Other transformations should be assessed as they may provide an improved model. For the log transformed data however, the level of THC administered does have a statistically significant effect on the mean of the log of activity scores (p = 0.0002).
 
 It identified that the small doses of THC (0.1, 0.5 and 1 $\mu g$) seem to do more to increase activity compared to the control than the larger doses (2 $\mu g$). Using Dunnett’s test at a 5% significance level, the means of the log of activity scores were significantly different for the control group and each of the 0.1, 0.5, and 1 $\mu g$ groups. The 2$\mu g$ group was not significantly different from the control.
 
 
-## 4.2 Orthogonal Contrasts
+## Contrasts
+
+### Orthogonal Contrasts - Animal Learning Behaviour
 
 The table below shows a measure that is indicative of animal learning behaviour. This learning behaviour score is recorded for animals subject to 5 different experimental treatments. 
 
@@ -358,7 +365,7 @@ Treatments 1 and 2 represent control conditions in which the animal received ad 
  
 Before running this experiment, the researchers decided it would be appropriate to compare combined control groups (treatments 1 and 2) with combined experimental groups, the control groups with each other, the singly-deprived treatments with the doubly- deprived treatment and the singly-deprived treatments with each other.
 
-#### 1. 	Define the contrasts which correspond to each of these comparisons:  
+####	Define the contrasts which correspond to each of these comparisons:   {-}
 
 1. (1+2) v (3+4+5)
 2. 1 v 2
@@ -376,7 +383,7 @@ The coefficients for each contrast are as follows:
 - $\psi_4$:  0, 0, 1, -1, 0.  
 
 
-#### 2. 	Demonstrate that these four comparisons make up a set of mutually orthogonal contrasts.
+####	Demonstrate that these four comparisons make up a set of mutually orthogonal contrasts. {-}
 
 
 ##### Solutions
@@ -404,17 +411,17 @@ sum(c3*c4)
 Thus all four contrasts are mutually orthogonal.
 
 
-#### 3. 	Fit a one-way fixed effects ANOVA model to this data and enter the four contrasts which we wish to test.
+####	Fit a one-way fixed effects ANOVA model to this data and enter the four contrasts which we wish to test.  {-}
 
 We wish to test the following for each of the four contrasts:
 $$ H_0: \psi_j = 0 \\ H_A: \psi_j \neq 0. $$
 
 ![](R.svg)
 
-The data is available in the file *Lab 04 - Learning.sav*. After reading the data, its important to check if the categorical variable is set as a factor. If not we need to set it to be a factor. 
+The data is available in the file *Lab_04_Learning.sav*. After reading the data, its important to check if the categorical variable is set as a factor. If not we need to set it to be a factor. 
 
 ```{r include=TRUE}
-data <- haven::read_sav('Lab 04 - Learning.sav')
+data <- haven::read_sav('Lab_04_Learning.sav')
 data <- as.data.frame(data)
 
 is.factor(data$Trtmnt_Grp)
@@ -436,13 +443,11 @@ summary(lm(Trials ~ Trtmnt_Grp, data=data, contrasts=list(Trtmnt_Grp = mat)))
 
 There's no easy way to perform this in jamovi, but you can paste the preceding R code in the Rj Editor. Jamovi does have several common contrast options that are able to be selected from the dropdown menu at ANOVA → Contrasts. The output indicates what is being compared for each option. You may need to set the reference category to get the contrasts you need here by editing the variable settings. 
 
-
  
 ##### Solutions 
 
-
 ```{r include=TRUE}
-data <- haven::read_sav('Lab 04 - Learning.sav')
+data <- haven::read_sav('Lab_04_Learning.sav')
 data <- as.data.frame(data)
 
 data$Trtmnt_Grp = as.factor(data$Trtmnt_Grp)
@@ -457,10 +462,8 @@ mat = cbind(c1, c2, c3, c4)
 summary(lm(Trials ~ Trtmnt_Grp, data=data, contrasts=list(Trtmnt_Grp = mat)))
 ```
 
-
  
- 
-#### 4. 	Write an appropriate concluding statement for each planned comparison.
+#### Write an appropriate concluding statement for each planned comparison. {-}
 
 ##### Solutions
 
@@ -473,7 +476,7 @@ $H_0: \frac{\mu_3 + \mu_4}{2} = \mu_5, H_A: \frac{\mu_3 + \mu_4}{2} \neq \mu_5$ 
 $H_0: \mu_3 = \mu_4, H_A: \mu_3 \neq \mu_4$ → $H_0: \psi_4 = 0, H_A: \psi_4 \neq 0$: The population mean number of trials taken by animals in the food deprived group is statistically significantly smaller than the population mean number of trials taken by animals in the water deprived group (p = 0.015), suggesting food deprivation has improved animal behaviour compared to water deprivation.   
 
 
-#### 5. 	Why is it important to differentiate between planned and unplanned comparisons?
+####	Why is it important to differentiate between planned and unplanned comparisons? {-}
 
 ##### Solutions
 
@@ -492,24 +495,24 @@ leveneTest(Trials ~ Trtmnt_Grp, data=data, center="mean")
 ```
 
 
-## 4.3 Polynomial Contrasts
+### Polynomial Contrasts - Box Office Takings
 
 In the lecture I presented an R script that generated some data. This data was for film box office takings in millions of dollars predicted by the ordinal variable film rating in stars from one to five. 
 
-#### 1. Load the *Lab 04 - Box_Office_1.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. Also formally test for a statistically significant polynomial contrasts at the 5% significance level.
+#### Load the *Lab_04_Box_Office_1.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. Also formally test for a statistically significant polynomial contrasts at the 5% significance level. {-}
 
 ![](R.svg)
 
 For R users, this file type is different to the .sav SPSS files we have already seen. The commands for loading the data are quite similar though. 
 
-```
-data = read.csv(file = "Lab 04 - Box_Office_1.csv")
+```{r eval=F}
+data = read.csv(file = "Lab_04_Box_Office_1.csv")
 data$film_ratings = ordered(dat$film_ratings)
 ```
 The film ratings are numeric. We need to also tell R that the variable is a factor, and ordinal. This is done with   `ordered()`. 
 
 We then create the linear model using the conrasts command and using the `contr.poly()` function to automatically determine the contrasts. The 5 is for how many levels the ordinal variable has. 
-```
+```{r eval=FALSE}
 lm_contrast = lm(box_office~film_ratings, data=data, contrasts=list(film_ratings = contr.poly(5)))
 summary(lm_contrast)
 ```
@@ -522,7 +525,7 @@ In Jamovi, go to ANOVA → ANOVA → Contrasts → Polynomial.
 ##### Solutions
 
 ```{r include=TRUE, echo=F}
-data = read.csv('Lab 04 - Box_Office_1.csv')
+data = read.csv('Lab_04_Box_Office_1.csv')
 data$film_ratings = ordered(data$film_ratings)
 
 boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")
@@ -536,7 +539,7 @@ Looking at the boxplots there appears to be a positive relationship that is non-
 At the 5% significance level we would only find a linear relationship in the ordinal variable. 
 
 
-#### 2. The box plots you created in question 1 should have shown a quadratic relationship. There are two possible reasons why you were not able to identify it at the 5% significance level? What are they? 
+#### The box plots you created in question 1 should have shown a quadratic relationship. There are two possible reasons why you were not able to identify it at the 5% significance level? What are they?  {-}
 
 
 ##### Solutions
@@ -545,12 +548,12 @@ Either the quadratic relationship does not exist, and therefore not identifying 
 
 In fact, the data is actually simulated from a model that uses a quadratic function. This means that here we know the truth, and that is the population is a quadratic relationship. We did not identify this, therefore we made a type II error. 
 
-#### 3. Load the *Lab 04 - Box_Office_2.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. What sort of relationship would you expect to see identified in a formal test and would you expect the parameter estimates to be positive or negative?  
+#### Load the *Lab_04_Box_Office_2.csv* data set. Create a side-by-side boxplot and comment on the relationship between score and box office taking. What sort of relationship would you expect to see identified in a formal test and would you expect the parameter estimates to be positive or negative?   {-}
 
 ##### Solutions
 
 ```{r include=TRUE, echo=F}
-data = read.csv('Lab 04 - Box_Office_2.csv')
+data = read.csv('Lab_04_Box_Office_2.csv')
 data$film_ratings = ordered(data$film_ratings)
 
 boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")
@@ -559,7 +562,7 @@ boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box O
 The side-by-side box plots start low and then moving to the right increase and then start to decrease. This indicates a negative quadratic relationship, meaning the parameter estimate should be negative. Given that it looks roughly symetric, there is unlikely to be a significant linear contrast.  
 
 
-#### 4. Formally test for a statistically significant polynomial contrasts at the 5% significance level. Check to see if the significant contrasts have the parameter estimates you expected.   
+#### Formally test for a statistically significant polynomial contrasts at the 5% significance level. Check to see if the significant contrasts have the parameter estimates you expected.  {-}   
 
 ##### Solutions
 
@@ -571,12 +574,12 @@ summary(lm_contrast)
 There is a statistically significant negative quadratic relationship at the 5% significance level. As expected there is no significant linear relationship. 
 
 
-#### 5. Load the *Lab 04 - Box_Office_3.csv* data set. This is data comes from the same model that was used to create the data in question 1, however this data set is much larger. Are you now able to identify a statistically significant quadratic relatiosnhip?  
+#### Load the *Lab_04_Box_Office_3.csv* data set. This is data comes from the same model that was used to create the data in question 1, however this data set is much larger. Are you now able to identify a statistically significant quadratic relatiosnhip?   {-}
 
 ##### Solutions
 
 ```{r include=TRUE, echo=F}
-data = read.csv('Lab 04 - Box_Office_3.csv')
+data = read.csv('Lab_04_Box_Office_3.csv')
 data$film_ratings = ordered(data$film_ratings)
 
 boxplot(box_office~film_ratings, data=data, xlab = "Film Ratings", ylab = "Box Office Takings")

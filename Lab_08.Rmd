@@ -1,0 +1,32 @@
+---
+title: "Lab 8 (Week 9)"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+loadNamespace('haven')
+
+data <- haven::read_sav('Lab 08 - Stress.sav')
+data <- as.data.frame(data)
+
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+## Lab 8 - Week 9 {-}
+
+This page has not been built. 

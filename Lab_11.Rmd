@@ -1,0 +1,14 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+## Lab 11 - Week 12 {-}
+
+This page has not been built. 

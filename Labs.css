@@ -8,25 +8,12 @@ h5 {
   display: none ;
 }
 
-.section.level1 > div:first-of-type {
-  border-radius: 6px ;
-  padding: 6px 30px 30px;
-  background-color: #EEEEEE ;
-  margin: 60px ;
-}
-
-
 .section.level4 > p,
 .section.level4 > pre {
   margin-left: 24px ;
 }
 
-.section.level5 {
-  background-color: #EEEEEE ;
-  padding: 8px 8px 8px 8px ;
-  border-radius: 4px ;
-  margin-left: 16px ;
-}
+
 
 .table {
   margin: auto ;
@@ -37,3 +24,42 @@ h5 {
 td, th {
   white-space: nowrap;
 }
+
+/* Settings for the solutions section */
+.section.level5 {
+  background-color: #EEEEEE ;
+  padding: 8px 8px 8px 8px ;
+  border-radius: 4px ;
+  margin-left: 16px ;
+}
+
+
+/* Settings for the Recall seection at the start of the document. */ 
+#recall {
+  color: black;
+  border-color: #FF0000 ;
+  border-radius: 6px ;
+  padding: 6px 30px 30px;
+  background-color: #EEEEEE ;
+  margin: 60px ;
+}
+
+
+
+/* Counter for level 4 headings. - Need to turn off numbering of these with {-} */ 
+h3 {
+  counter-reset: counter-level-4;
+}
+
+h4:not(.date)::before {
+  counter-increment: counter-level-4;
+  content: counter(counter-level-4) ". ";
+}
+
+
+
+
+
+
+
+

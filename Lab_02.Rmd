@@ -1,7 +1,21 @@
 ---
 title: "STAT2000: Applied Statistics and Research Methods"
+date: "Semester 1, 2020"
 output: 
   html_document: 
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    self_contained: true
+    theme: default
+    include:
+      after_body: ./styles.js
+    pandoc_args: [
+      "--number-offset", "2,0,0,0",
+      ]
     css: Labs.css
 params:
   inc_solu:
@@ -29,9 +43,9 @@ loadNamespace('car')
 </style>
 ```
 
-# Lab 2 - Week 3
+## Lab 2 - Week 3 {-}
 
-#### Recall Lecture 2:
+### Recall Lecture 2: {#recall -}
 
   - Research Methods
     - The Research Process
@@ -40,7 +54,7 @@ loadNamespace('car')
       - Study Design
       - Measurement
 
-### Lab Objectives
+### Lab Objectives {-}
 
 On completion of this lab you will be able to:
 
@@ -49,13 +63,13 @@ On completion of this lab you will be able to:
  - critically assess the research design.
  - form groups for the project.
 
-#### Overview
+### Overview {-}
 
 In the Week 2 lecture (and in Module 3) we discussed foundational aspects of study design, including but not limited to, identifying: the type of study appropriate for your investigation (survey, observational, experiment); how you could obtain representative samples and measure key information validly and reliably; aspects surrounding bias and precision. 
 
 We now employ such ideas in the critical appraisal of existing published studies, and begin to design our own experiments.
 
-#### Required Readings -- Read first case study prior to attending your lab
+### Required Readings -- Read first case study prior to attending your lab  {-}
 
  1. Case Study 1 -- from Blackboard  
     - Cardiegues M. et al (2000). *A comparison of jump performances of the dog flea, Ctenocephalides canis (Curtis, 1826) and the cat flea, Ctenocephalides felis felis (Bouch, 1835)*, Veterinary Parasitology, Volume 92, Issue 3, Pages 239 -- 241. https://www.sciencedirect.com/science/article/pii/S0304401700002740
@@ -63,21 +77,25 @@ We now employ such ideas in the critical appraisal of existing published studies
  2. Case Study 2 -- from Blackboard
     - de Groot R. H. M., Hornstra G.; Roozendaal N.; Jolles J. (2003) *Memory Performance, but not Information Processing Speed, may be Reduced During Early Pregnancy*, Journal of Clinical and Experimental Neuropsychology, Volume 25, Issue 4, pages 482 -- 488. https://www.tandfonline.com/doi/abs/10.1076/jcen.25.4.482.13871
 
-## 2.1 Case Study 1
+## Case Study 1
 
 *The lab will commence under the assumption that you have read the first article!*
+
+
+### Jump performances of fleas 
 
 - Cardiegues M. et al (2000). *A comparison of jump performances of the dog flea, Ctenocephalides canis (Curtis, 1826) and the cat flea, Ctenocephalides felis felis (Bouch, 1835)*, Veterinary Parasitology, Volume 92, Issue 3, Pages 239 -- 241. https://www.sciencedirect.com/science/article/pii/S0304401700002740
 
 It's possible, perhaps, that you don't particularly care about whether dog fleas jump higher than cat fleas. However, by going over this study you will hopefully learn the importance of being precise in the conduct and reporting of scientific research and in interpreting the results.
 
-#### 1. Identify who may be interested in such results.
+
+#### Identify who may be interested in such results. {-}
 
 ##### Solutions
 
 If you were questioning the relevance of this paper perhaps consider issues of quarantine, use of the information by veterinarians or producers of flea products, biologists.
 
-#### 2. Comment on the two related studies that are reported in this paper. Among other things, you should consider the following:
+#### Comment on the two related studies that are reported in this paper. Among other things, you should consider the following: {-}
  - What are the response and explanatory variables?
  - How were each of the variables measured?
  - Is each study observational or experimental?
@@ -88,13 +106,13 @@ If you were questioning the relevance of this paper perhaps consider issues of q
 
 ##### Solutions
 
-###### *Response and Explanatory Variables*
+**Response and Explanatory Variables**
 
 It seems the research has probably been conducted quite reasonably but reported poorly. The two studies are basically about comparing the jump length of the dog flea to that of the cat flea, and the same for jump height. 
 
 The predictor (explanatory) variable was 'species' (of flea), it was the predictor of the measured outcomes (response) 'jump distance' and '% achieving particular height'. 
 
-###### *Experiments or Observational Studies*
+**Experiments or Observational Studies**
 
 Were fleas randomised to each species? No, they were already either cat or dog fleas. Therefore, it is not an experiment, but is an observational study.
 
@@ -147,7 +165,9 @@ The statement: "The mean height jump carried out by 50% of fleas was calculated 
 
 As stated above, it is entirely possible that you don't particularly care that dog fleas jump higher and longer than cat fleas. However, by going over this study you have hopefully learnt about the importance of being precise in the conduct and reporting of scientific research and equally precise in interpreting the results. 
 
-## 2.2 Case Study 2
+## Case Study 2
+
+### Baby brain
 
 Read the following research paper:
 
@@ -155,7 +175,7 @@ Read the following research paper:
     
 You may not completely understand all of the detailed terminology used in this paper but hopefully you will understand the main concepts. Answer the following questions:
 
-#### 1. What groups are being compared in this study? Is this an experimental or an observational study?
+#### What groups are being compared in this study? Is this an experimental or an observational study? {-}
 
 ##### Solutions
 
@@ -163,13 +183,13 @@ This single study suggests some effect of pregnancy on memory performance. (You 
 
 There are two comparison groups: a group of pregnant women and a control group women who were not pregnant. This is an observational study. Individuals are NOT being randomly allocated (randomised) to the two levels of the nominal explanatory variable, being pregnant or not.
 
-#### 2. What response variables are being used as the basis for the comparison? Are they clearly defined?
+#### What response variables are being used as the basis for the comparison? Are they clearly defined? {-}
 
 ##### Solutions
 
 A range of cognitive tests were used. The response variables are described in the MATERIALS AND METHODS section of the paper under the sub-section ‘Tests for Cognitive Functioning’ and are also listed in Table 2. Note that some of the tests yield several different response variables. The tests are well-enough described for the reader to have a reasonable understanding of how the test was carried out and what it attempts to measure. The complete detailed definitions of these standard tests are contained in the references given.
 
-#### 3. Apart from these response variables and the nominal explanatory variable defining the comparison groups, what other variables are considered in this study and why?
+#### Apart from these response variables and the nominal explanatory variable defining the comparison groups, what other variables are considered in this study and why? {-}
 
 ##### Solutions
 
@@ -177,7 +197,7 @@ A number of other variables are listed in Table 1. These were used as a check on
 
 The selection and exclusion criteria (described in the MATERIALS AND METHODS section of the paper under the sub-section Subjects) could also be considered variables. They are used for a similar reason, namely, to eliminate other possible sources of bias between the groups and reduce variation within the groups.
 
-#### 4. The phrase "clinical significance" is used in the abstract. What does this mean? Is this the same as "statistical significance"?
+#### The phrase "clinical significance" is used in the abstract. What does this mean? Is this the same as "statistical significance"? {-}
 
 ##### Solutions
 
@@ -187,7 +207,7 @@ This is quite a different concept to "statistical significance" which is purely 
 
 In this study, the researchers are saying that they have found evidence of a difference in some cognitive measures between the groups but the differences are not very big and they aren't sure of how meaningful those difrences really are.
 
-#### 5. Consider yourself as an objective researcher in the field. Identify:
+#### Consider yourself as an objective researcher in the field. Identify: {-}
  - positive features of the way this research been well conducted;
  - concerns, if any, you have about the research;
  - any improvements in the way that the data was collected, analysed or presented
@@ -198,7 +218,7 @@ Overall this seems a reasonably well conducted and reported study. In particular
 
 The formation of the control group and the use of number of pregnancies as a covariate could perhaps be considered in a bit more detail. Is number of pregnancies an interval scale? For example, is the difference between 0 and 1 pregnancy equivalent to the difference between 2 and 3 pregnancies. Perhaps we need at least 3 comparison groups; women who have never been pregnant, women who are currently pregnant and women who have been pregnant but who aren't at the moment. This depends upon the aims.
 
-### 2.3 Project Discussion – forming teams
+## Project Discussion – forming teams
 
 As part of this course you must form a project team to design and conduct a simple research project. Time will be allocated in the lab for forming teams and initial discussions.
 Read and understand the Group Project documents on Blackboard:
@@ -225,7 +245,9 @@ You should consider people who have a similar work ethic or aspirations to you, 
     - Check with your tutor if you have questions about any aspect of the project.
  - Before you finish this lab, you must give your tutor a list of the students who are in your group and an identified agreed upon meeting day, time and location.
 
-### 2.4 Homework -- The concept of Confounding
+## Self-study
+
+### The concept of confounding
 
 A social psychologist wants to test the implications of a theory of personal space. He thinks that people will differ in their reaction to others who intrude in their personal space depending on the perceived status of the intruder. Specifically, he predicts that people who are viewed as having higher status in some way will be permitted to move closer than those who are not viewed as having higher status.
 
@@ -237,13 +259,13 @@ After being introduced to each subject the friend took the second chair and plac
 
 After many subjects were tested in this manner, the psychologist found significantly fewer people adjusted their seating position when the observer was introduced as a graduate student than when the observer was introduced as an undergraduate. There was no difference in the number of moves made by subjects in the two conditions in which the observers were introduces as undergraduates. The investigator concluded that his hypothesis was supported.
 
-#### 1. Is this an experimental or observational study?
+#### Is this an experimental or observational study? {-}
 
 ##### Solutions
 
-1. 	This is an experimental study as the roles (levels of the predictor variable, perceived status of the intruder) were randomly allocated, and the effect on the response, whether the subject moved his/her chair away from the person potentially intruding on the subject's personal space, was recorded.
+This is an experimental study as the roles (levels of the predictor variable, perceived status of the intruder) were randomly allocated, and the effect on the response, whether the subject moved his/her chair away from the person potentially intruding on the subject's personal space, was recorded.
 
-#### 2. What is the independent variable (and its levels) in this study?
+#### What is the independent variable (and its levels) in this study? {-}
 
 ##### Solutions
 
@@ -252,19 +274,19 @@ The independent or explanatory variable, perceived status of the observer, has t
  - "an undergraduate honours student working for me"
  - "a graduate student working for me"
 
-#### 3. What is the dependent variable?
+#### What is the dependent variable? {-}
 
 ##### Solutions
 
 The response or dependent variable is whether the subject moved his/her chair away (or how many subjects moved their chairs away) while the observer sat 15 cm from the subject for 5 minutes.
 
-#### 4. Identify the confounding variable and explain why it is a threat to the study’s internal validity.
+#### Identify the confounding variable and explain why it is a threat to the study’s internal validity. {-}
 
 ##### Solutions
 
 The key sentence is "Prior to testing any subjects, three different friends were randomly assigned one of the three roles to play and subsequently kept that same role throughout the experiment." Thus any differences in participant reaction could have absolutely nothing to do with perceived status of the observer and everything to do with the personal characteristics of that particular individual (e.g., viewed as good looking/attractive/not, scary, bad breath, and dozens of other possible characteristics). The explanatory variable is completely confounded with other differences between the individuals.
 
-#### 5. What specific control technique(s) should the investigator have employed in order to protect the internal validity of this study?
+#### What specific control technique(s) should the investigator have employed in order to protect the internal validity of this study? {-}
 
 ##### Solutions
 

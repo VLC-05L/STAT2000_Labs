@@ -1,0 +1,33 @@
+---
+title: "STAT2000: Applied Statistics and Research Methods"
+output: 
+  html_document: 
+    css: Labs.css
+params:
+  inc_solu:
+    label: Include solutions
+    value: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+if ( ! require('ResourceSelection'))
+  install.packages('ResourceSelection')
+```
+
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+## Lab 12 - Week 13 {-}
+
+This page has not been built. 

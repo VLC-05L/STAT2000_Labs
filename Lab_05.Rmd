@@ -1,7 +1,21 @@
 ---
 title: "STAT2000: Applied Statistics and Research Methods"
+date: "Semester 1, 2020"
 output: 
   html_document: 
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    self_contained: true
+    theme: default
+    include:
+      after_body: ./styles.js
+    pandoc_args: [
+      "--number-offset", "5,0,0,0",
+      ]
     css: Labs.css
 params:
   inc_solu:
@@ -17,7 +31,7 @@ if ( ! require('haven'))
 if ( ! require('car'))
   install.packages('car')
 
-data <- haven::read_sav('Lab 05 - Recall.sav')
+data <- haven::read_sav('Lab_05_Recall.sav')
 data <- as.data.frame(data)
 
 ```
@@ -30,15 +44,15 @@ data <- as.data.frame(data)
 </style>
 ```
 
-# Lab 5 - Week 6
+## Lab 5 - Week 6 {-}
 
-#### Recall Lecture 5:
+### Recall Lecture 5: {#recall -}
 
  - Revision: One-way fixed effects ANOVA, Unplanned comparisons, Contrasts, 
  - Two-way ANOVA, Interactions
  - Common study designs: Extensions on Two-way ANOVA
 
-### Lab Objectives
+### Lab Objectives {-}
 
 On completion of this lab you will be able to:
 
@@ -46,38 +60,38 @@ On completion of this lab you will be able to:
  - Fit a factorial ANOVA model with an interaction term.
  - Interpret the interaction effect
 
-### Overview
+### Overview {-}
 
 In the Week 5 lecture we reviewed some of the content covered in the course so far: One-way fixed effects ANOVA; Unplanned comparisons; Contrasts. We then extended the one-way ANOVA to a two-way fixed effects ANOVA where we have two main factors and an interaction term. We also looked at factorial ANOVA as well other types of designs.
 
 
-#### Data Files
+### Data Files {-}
 
 ```{r echo=FALSE}
-xfun::embed_file("Lab 05 - Recall.sav")
+xfun::embed_file("Lab_05_Recall.sav")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 05 - Advertising.sav")
+xfun::embed_file("Lab_05_Advertising.sav")
 ```  
 
 
-## 5.1 Two Way ANOVA
+## Two Way ANOVA
+
+### Recall and Mood
 
 Recall the example provided in Lecture 5:
 
  - Does one’s mood influence how well things are remembered? A psychologist decides to research this question using two factors. 
  - Factor A represents the emotional condition under which the subjects are required to learn a list of words. Subjects are made to feel either happy or sad. 
  - Factor B represents the emotional condition under which the subject’s memory is tested. Subjects are made to feel happy or sad before they are told to recall words
- - The response variable is the number of words recalled. The data appears in *Lab 05 - Recall.sav*.
+ - The response variable is the number of words recalled. The data appears in *Lab_05_Recall.sav*.
 
 Number of words recalled for given levels of mood during learning and at recall.
 
-#### 1. Express the two-way ANOVA model required for analysing this data algebraically (i.e., in terms of a mathematical equation). Clearly define all the symbols in the context of this example.
+#### Express the two-way ANOVA model required for analysing this data algebraically (i.e., in terms of a mathematical equation). Clearly define all the symbols in the context of this example. {-}
 
 ##### Solutions
-
- 
 
 With two fixed factors, the ANOVA model is:
 
@@ -97,7 +111,7 @@ where in this example
  - $\alpha\beta_{ij}$ is the interaction effect of the ith learning mood and jth recall mood on the number of words remembered.
  - $\epsilon_{ijk}$ is the error term of the observation, $Y_{ijk}$, assumed to be distributed normally with a mean of zero and variance of $\sigma^2$. It is the remaining unexplained variation after the effects of learning mood and recall mood and any interaction effect have been accounted for.
 
-#### 2. Fit the appropriate ANOVA model. Record the means and obtain plots of the factor level (group) sample means for each factor to enable a visual consideration of the effects of the factors.
+#### Fit the appropriate ANOVA model. Record the means and obtain plots of the factor level (group) sample means for each factor to enable a visual consideration of the effects of the factors. {-}
 
 ![](R.svg)
 
@@ -105,7 +119,7 @@ It's possible to use a number of different functions to achieve this, but for th
 
 ```{r, eval=FALSE}
 library(jmv)
-data <- haven::read_sav('Lab 05 - Recall.sav')
+data <- haven::read_sav('Lab_05_Recall.sav')
 data <- as.data.frame(data)
 
 ANOVA(
@@ -117,7 +131,7 @@ ANOVA(
 
 The more traditional way in R would be as follows: 
 ```{r, eval=FALSE}
-data <- haven::read_sav('Lab 05 - Recall.sav')
+data <- haven::read_sav('Lab_05_Recall.sav')
 data <- as.data.frame(data)
 
 lm_1 = lm(WordsRecalled~LearningMood*RecallMood, data = data)
@@ -149,7 +163,7 @@ Analyses -> ANOVA -> ANOVA. This is a two-way ANOVA, so we'll be specifying two 
 
 ```{r}
 library(jmv)
-data <- haven::read_sav('Lab 05 - Recall.sav')
+data <- haven::read_sav('Lab_05_Recall.sav')
 data <- as.data.frame(data)
 
 ANOVA(
@@ -159,47 +173,39 @@ ANOVA(
   emmTables = TRUE)
 ```
 
-#### 3. Write the relevant null and alternative hypotheses for testing whether there is an interaction between the mood during learning and the mood during recall in how these factors relate to the number of words recalled. What is the relevant test statistic, p-value and your decision?
+#### Write the relevant null and alternative hypotheses for testing whether there is an interaction between the mood during learning and the mood during recall in how these factors relate to the number of words recalled. What is the relevant test statistic, p-value and your decision? {-}
 
 ##### Solutions
 
+$H_0: \alpha\beta_{ij} = 0$ for all i, j
  
-
- $H_0: \alpha\beta_{ij} = 0$ for all i, j
- 
- $H_a: \alpha\beta_{ij} ≠ 0$ for at least one i, j pair
+$H_a: \alpha\beta_{ij} ≠ 0$ for at least one i, j pair
 
 The relevant test statistic is F = 985.80, associated p-value < 0.001 and thus $H_0$ is rejected.
 
-#### 4. Write the relevant null and alternative hypotheses for testing whether the mood during learning has an effect on the number of words recalled. What is the relevant test statistic, p-value and your decision?
+#### Write the relevant null and alternative hypotheses for testing whether the mood during learning has an effect on the number of words recalled. What is the relevant test statistic, p-value and your decision? {-}
 
 ##### Solutions
 
- 
+$H_0: \alpha_i = 0$ for all i
 
- $H_0: \alpha_i = 0$ for all i
-
- $H_a: \alpha_i ≠ 0$ for at least one i
+$H_a: \alpha_i ≠ 0$ for at least one i
  
 The relevant test statistic is F = 47.07, associated p-value < 0.001 and thus $H_0$  is rejected.
 
-#### 5. Write the relevant null and alternative hypotheses for testing whether the mood during recall has an effect on the number of words recalled. What is the relevant test statistic, p-value and your decision?
+#### Write the relevant null and alternative hypotheses for testing whether the mood during recall has an effect on the number of words recalled. What is the relevant test statistic, p-value and your decision? {-}
 
 ##### Solutions
 
+$H_0: \beta_j = 0$ for all j
  
-
- $H_0: \beta_j = 0$ for all j
- 
- $H_a: \beta_j ≠ 0$ for at least one j
+$H_a: \beta_j ≠ 0$ for at least one j
  
 The relevant test statistic is F = 1.10, associated p-value = 0.310 and thus $H_0$  is not rejected.
 
-#### 6. Provide a concluding paragraph that would be appropriate to include in a report summarising the results of this research.
+#### Provide a concluding paragraph that would be appropriate to include in a report summarising the results of this research. {-}
 
 ##### Solutions
-
- 
 
 There is a statistically significant interaction effect on the population mean number of words recalled due to both the mood when learning and mood when recalling (p < .001); this is also evident from the graph which shows the difference in means  for a given level of mood at recall is affected by the level of mood when learning. Mood at recall does not itself have a statistically significant effect on the population mean number of words recalled (p=0.31) whilst mood when learning does (p < .001).
 
@@ -212,34 +218,34 @@ We are 95% confident that the population mean number of words recalled when:
  - Happy at learning and sad at recall lies between 43.2 and 48.4
  - Sad at learning and happy at recall lies between 36.0 and 41.2
 
-#### 7. Use this example to explain why is it important to always check for an interaction effect before interpreting the main effects.
+#### Use this example to explain why is it important to always check for an interaction effect before interpreting the main effects. {-}
 
 ##### Solutions
-
- 
 
 Someone who just looked at the output superficially may look at the results of the test of the effect of recall mood and declare that it has no statistically significant effect based on the p-value of 0.31. If you look at the means plot for the recall mood factor it certainly shows that averaged over the levels of the learning mood factor there is no effect of recall mood on the number of words recalled. However, in this case, it is certainly not correct to say that recall mood does not have an effect. Recall mood has a very large effect but the effect depends on the level of the learning mood factor’s level. 
 
 This is why you should always check for an interaction effect first before trying to test for the significance of individual factors or interpret what is really happening.
 
 
-## 5.2 Factorial (multi-way) ANOVA
+## Factorial (multi-way) ANOVA
+
+### Television Advertising
 
 A researcher is interested in how well consumers recall television advertising that they have seen. Two factors that the researcher considers may have an effect are the existence of a celebrity in the advertisement as well as the gender of the primary spokesperson in the advertisement. Individuals for the study are randomly selected and then randomly allocated to groups. Each of the groups will watch a set piece of television programming for two hours with several advertisements that meet the respective groups criteria randomly scattered though ordinary advertisements.
 
 After the viewing the subjects are tested on their recall of details shown in the advertisements and provided a score of their recall. A higher score indicates better recall of advertising details. The researcher wishes to test at the 5% significance level.
 
-The results of the study are in *Lab 05 - Advertising.sav*. If using R, remember to convert the predictor variables to factors using `as.factor()`.
+The results of the study are in *Lab_05_Advertising.sav*. If using R, remember to convert the predictor variables to factors using `as.factor()`.
 
 ```{r}
-data <- haven::read_sav('Lab 05 - Advertising.sav')
+data <- haven::read_sav('Lab_05_Advertising.sav')
 data <- as.data.frame(data)
 data$Celebrity <- as.factor(data$Celebrity)
 data$GenderSpokes <- as.factor(data$GenderSpokes)
 data$GenderViewer <- as.factor(data$GenderViewer)
 ```
 
-#### 1. The researcher has asked that you perform a statistical analysis to determine if the grade of celebrity and or gender of the spokesperson effects recall in television advertisements. As part of your analysis, be sure to:
+#### The researcher has asked that you perform a statistical analysis to determine if the grade of celebrity and or gender of the spokesperson effects recall in television advertisements. As part of your analysis, be sure to: {-}
 
  - Include the null and alternative hypotheses for the elements of the model you are testing.
  - Justify your final decision.
@@ -247,8 +253,6 @@ data$GenderViewer <- as.factor(data$GenderViewer)
 This requires a two way ANOVA to be performed. 
 
 ##### Solutions
-
-  
 
 ```{r}
 model <- lm(Score ~ Celebrity * GenderSpokes, data)
@@ -283,18 +287,13 @@ The $\beta_j$ represents the effect due to the jth level of the `GenderSpokes` f
 
 Given the p-value of 0.191 is greater then our significance level, we are unable to identify a statistically significant effect for the `GenderSpokes` main effect. 
 
-
-
-
-#### 2. After providing your analysis to the researcher, she informs you that you forgot a factor in the model. An additional factor for which data was collected was intended to be included in the analysis. The additional factor is the gender of the person viewing the advertisements. Run your analysis again including the additional factor.
+#### After providing your analysis to the researcher, she informs you that you forgot a factor in the model. An additional factor for which data was collected was intended to be included in the analysis. The additional factor is the gender of the person viewing the advertisements. Run your analysis again including the additional factor. {-}
 
   i. Looking at the ANOVA table, are there any factors of the model that are now significant? Be sure to indicate your null and alternative hypothesis for these factors as well as check the assumptions for the analysis.
   
   ii. Explain the relationship with any of the interaction terms that are identified as being statistically significant. Use a marginal means plot (profile plots) to help with this.
 
 ##### Solutions
-
-  
 
 Below is the ANOVA table for the three way ANOVA.
 
@@ -376,21 +375,23 @@ emmip(model,formula = ~ GenderViewer~GenderSpokes, data = data, CIs = T, PIs = F
 ```
 
 
-#### 3. You are now told that when individuals were allocated to groups, they were informed of the style of advertisements they were going to be eventually tested on. Does this information change the validity of any conclusions you are able to make from the experiment?
+#### You are now told that when individuals were allocated to groups, they were informed of the style of advertisements they were going to be eventually tested on. Does this information change the validity of any conclusions you are able to make from the experiment? {-}
 
 As people were informed of what to look out for, this may make the results of the experiment not generalisable to the general public. For example, knowing that you’re supposed to be looking at adds with celebrities, you may recognise adds with celebrities and pay closer attention. This could be the reason that this main effect was significant.
 
 
-## 5.3 Learning Recall Revisted
+## Learning Recall Revisted
 
-#### 1. In Exercise 5.1, there was no question on testing the assumptions of the two-way ANOVA. Using the *Lab 05 - Recall.sav* data set, test the assumptions when a two-way ANOVA is fitted. 
+### Assumptions and Remedial Measures
+
+#### In Section 5.1, there was no question on testing the assumptions of the two-way ANOVA. Using the *Lab_05_Recall.sav* data set, test the assumptions when a two-way ANOVA is fitted. {-}
 
 ##### Solutions
 
 We are not explicitly told about whether the individuals are randomly selected and or randomly allocated to treatment groups. Therefore randomness and independence may be violated. We should also test for equality of variance, normality and outliers. 
 
 ```{r, eval=TRUE}
-data <- haven::read_sav('Lab 05 - Recall.sav')
+data <- haven::read_sav('Lab_05_Recall.sav')
 data <- as.data.frame(data)
 
 lm_1 = lm(WordsRecalled~LearningMood*RecallMood, data = data)
@@ -405,7 +406,7 @@ qqPlot(residuals(lm_1))
 
 Levene's test shows no evidence (p = 0.81) of non-equal variance between the groups therefore this assumption is satisfied. A review of the Shapiro Wilk test of normality indicates that the assumption of normaility is violated (p = 0.048). We should therefore look at doing a transformation of the response variable. 
 
-#### 2. One of the assumptions should have failed. Transform the response variable and re-run the model using the new response variable. 
+#### One of the assumptions should have failed. Transform the response variable and re-run the model using the new response variable.  {-}
 
 ##### Solutions
 
@@ -429,23 +430,25 @@ anova(lm_1_Log)
 Looking at the ANOVA table now, the same factors are statistically significant in explaining the variation in the log of the number of words recalled. 
 
 
-## 5.4 Group Project
+## Group Project 
 
 This was a reminder to talk to your tutor about your group project. However the group project has been removed due to COVID-19. 
--
-If you have time still, have a go at exercise 5.4. 
+
+If you have time still, have a go at the next exercise. 
 
 <!-- Are you on track to complete your project proposal? Discuss ideas with your tutor.  -->
 
 
-## 5.5 Homework - Case Study
+## Homework 
+
+### Case Study: A patient by any other name...
 
 Read the following research paper. It is available on Blackboard.
 
 Langer, E. J., & Abelson, R. P. (1974). A patient by any other name ...: Clinician group difference in labeling bias. *Journal of Consulting and Clinical Psychology*, 42(1), 4–9. https://doi.org/10.1037/h0036054
 
 
-#### 1. Explain what the response and explanatory variables are in this study. How have they been measured or determined?
+#### Explain what the response and explanatory variables are in this study. How have they been measured or determined? {-}
 
 ##### Solutions
 
@@ -457,31 +460,27 @@ There are two explanatory variables:
 
 The response variable was a score between 1, representing very disturbed, and 10, representing very well-adjusted for the clinician's beliefs about the interviewee. However, this was not assessed directly by the clinician but was an average of ratings by 5 independent raters of the written responses by the clinicians to a set of open-ended questions about the interviewee. See Dependent Measure under METHOD for the details.
 
-#### 2. How has the data been analysed? Is this method appropriate?
+#### How has the data been analysed? Is this method appropriate? {-}
 
 ##### Solutions
 
-  
-
 The basic method is a 2 x 2 factorial ANOVA, i.e., a two-way ANOVA where each factor has 2 levels. (To complicate the analysis slightly, a subgrouping of the analytic group of clinicians was also analysed.)
 
-#### 3. Explain why the concept of interaction is so important in this study.
+#### Explain why the concept of interaction is so important in this study. {-}
 
 ##### Solutions
 
 The main result of this study (see next point) is all about interaction. The effect of the label is virtually non-existent for one group of clinicians, but substantial for the other group.
 
-#### 4. Summarise the main results of the study.
+#### Summarise the main results of the study. {-}
 
 ##### Solutions
 
 Regardless of whether the interviewee was labelled as a “patient” or a “job applicant”, the behavioural therapists tended to describe the interviewee as fairly well-adjusted (e.g., 6.26 v 5.98). The average adjustment rating from the analytic therapists however was significantly lower (more disturbed) for those who were told that the interviewee was a “patient” compared to the average rating from those told that he was a “job applicant” (e.g., NYU 5.88 v 2.40).
 
-#### 5. This study is a specific example of how people's judgement can be influenced or biased by their expectations. Why is this general concept often important when developing the detailed methodology for a research study?
+#### This study is a specific example of how people's judgement can be influenced or biased by their expectations. Why is this general concept often important when developing the detailed methodology for a research study? {-}
 
 ##### Solutions
 
 This study is a specific example of how people's judgement can be influenced or biased by their expectations. So if you are using people as the subjects of your experiment then you need to make sure that the responses you measure really are caused by the changes being made in the explanatory variables and not confounded by the subjects responding to information consciously or unconsciously provided by the researcher.
-
-
 

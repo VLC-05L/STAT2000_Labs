@@ -1,7 +1,21 @@
 ---
 title: "STAT2000: Applied Statistics and Research Methods"
+date: "Semester 1, 2020"
 output: 
   html_document: 
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    self_contained: true
+    theme: default
+    include:
+      after_body: ./styles.js
+    pandoc_args: [
+      "--number-offset", "3,0,0,0",
+      ]
     css: Labs.css
 params:
   inc_solu:
@@ -29,9 +43,9 @@ loadNamespace('car')
 </style>
 ```
 
-# Lab 3 - Week 4
+## Lab 3 - Week 4 {-}
 
-#### Recall Lecture 3
+### Recall Lecture 3: {#recall -}
 
   - One-way ANOVA including:
     - Assumptions 
@@ -40,9 +54,9 @@ loadNamespace('car')
     - Post-hoc tests
 
 
-### Lab Objectives
+### Lab Objectives  {-}
 
-#### On completion of this lab you will be able to:
+On completion of this lab you will be able to:
 
  - Perform a one-way ANOVA
  - Identify and test assumptions for an ANOVA.
@@ -51,25 +65,27 @@ loadNamespace('car')
  - Recognise the role of Randomisation and Blocking and be able to implement in practice.
  
 
-#### Overview
+### Overview {-}
 
 In the Week 3 lecture we discussed the ANOVA testing procedure and the assumptions underlying a oneway fixed effects ANOVA. We discussed how we may check or test these (diagnose) and what action we may take to remedy the situation when assumptions don't hold (remedial measures). We also considered the additional testing, for differences between groups, once the ANOVA identifies that at least one population mean differs (post-hoc tests).
 
 
-#### Data Files
+### Data Files {-}
 
 ```{r echo=FALSE}
-xfun::embed_file("Lab 03 - Fertilizer.sav")
+xfun::embed_file("Lab_03_Fertilizer.sav")
 ```
 <br>
 ```{r echo=FALSE}
-xfun::embed_file("Lab 03 - Vocab.sav")
+xfun::embed_file("Lab_03_Vocab.sav")
 ```
 
 
-## 3.1 One-way Fixed Effects ANOVA
+## One-way Fixed Effects ANOVA
 
-In an effort to determine whether there was any difference between three types of fertiliser, agricultural researchers subdivided a 30 hectare farm into plots of two hectares each. Of these 15 plots, five were treated with fertiliser A, five were treated with fertiliser B, and five were treated with fertiliser C. Wheat was planted on the farm and, at the end of the season, the number of tonnes reaped from each plot was measured. The data for this experiment are in the data file *Lab 02 - Fertilizer.sav* and displayed in the following table.
+### Fertiliser
+
+In an effort to determine whether there was any difference between three types of fertiliser, agricultural researchers subdivided a 30 hectare farm into plots of two hectares each. Of these 15 plots, five were treated with fertiliser A, five were treated with fertiliser B, and five were treated with fertiliser C. Wheat was planted on the farm and, at the end of the season, the number of tonnes reaped from each plot was measured. The data for this experiment are in the data file *Lab_03_Fertilizer.sav* and displayed in the following table.
 
   | Plot |  A  |  B  |  C  |
   |------|-----|-----|-----|
@@ -86,9 +102,7 @@ We can analyse this data using the one-way ANOVA model for a single fixed effect
 $$ Y_{ij} = µ_{i} + ε_{ij} $$
 $$ Y = µ + α_{i} + ε_{ij} $$
 
-#### 1. Define clearly all the model's symbols (including defining the subscripts) in the context of this example.
-
-#####
+#### Define clearly all the model's symbols (including defining the subscripts) in the context of this example. {-}
 
 The symbols of the oneway ANOVA model may be defined as follows:
 
@@ -100,7 +114,7 @@ The symbols of the oneway ANOVA model may be defined as follows:
  - $α_i$ is the effect of fertiliser $i$ on the population mean tonnes of wheat reaped per two hectare plot, i.e. the difference between $µ_i$ and $µ$.
  - $ε_{ij}$ is the error term for the $j$th plot treated with fertiliser $i$. Assumed to be $N(0, σ^2$). In other words, this is the remaining, unexplained variation for observation $Y_{ij}$ after allowing for the effect of the fertiliser type.
 
-#### 2. Write the appropriate null and alternative hypotheses for the given research question.
+#### Write the appropriate null and alternative hypotheses for the given research question. {-}
 
 ##### Solutions
 
@@ -115,10 +129,10 @@ $H_0$: Fertiliser type A, B, or C has NO effect on the population mean tonnage o
 
 $H_a$: Fertiliser type does affect the population mean tonnage of reaped per two 	 	hectare plot.
 
-#### 3. Perform a one way fixed effects ANOVA and reproduce the ANOVA table below.
+#### Perform a one way fixed effects ANOVA and reproduce the ANOVA table below. {-}
 
 ```{r echo=FALSE}
-data <- haven::read_sav('Lab 03 - Fertilizer.sav')
+data <- haven::read_sav('Lab_03_Fertilizer.sav')
 data <- as.data.frame(data)
 jmv::ANOVA(formula=Tonnes ~ Type, data)$main
 ```
@@ -158,11 +172,10 @@ model <- lm(Tonnes ~ Type, data)
 anova(model)
 ```
 
-#### 4. Label each component of the ANOVA table. Indicate how the df, SS components, MS components, and F test statistic were calculated.
+#### Label each component of the ANOVA table. Indicate how the df, SS components, MS components, and F test statistic were calculated. {-}
 
   |                |  SS   | df |  MS   |   F  |  p   |
   |----------------|-------|----|-------|------|------|
-  |<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|
   | Between Groups | 0.076 |  2 | 0.038 | .392 | .684 |
   | Within Groups  | 1.164 | 12 | 0.097 |
   | Total          | 1.240 | 14 |
@@ -172,28 +185,26 @@ anova(model)
 
   |                |  SS   | df |  MS   |   F  |  p   |
   |----------------|-------|----|-------|------|------|
-  |<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|<img width="100">|
   | Between Groups | 0.076 | (Groups - 1) | (SS / df) | $F_{between} / F_{within}$ | .684 |
   | Within Groups  | 1.164 | (N - Groups) | (SS / df) |
   | Total          | 1.240 | (N - 1)   |
 
   
 
-#### 5. Draw a diagram showing the value of the test statistic for this test and the associated p-value.
+#### Draw a diagram showing the value of the test statistic for this test and the associated p-value. {-}
 
 ##### Solutions
 
 
-![](Lab 03 - F.png)
+![](Lab_03_F.png)
 
-#### 6. Recall from STAT1070 the use of post-hoc testing. Is it appropriate to carry out post-hoc tests to compare group means in this scenario? If so, what test is most appropriate to identify which fertilisers differ in terms of the tonnes reaped and conduct the test?  If not appropriate, why not?
+#### Recall from STAT1070 the use of post-hoc testing. Is it appropriate to carry out post-hoc tests to compare group means in this scenario? If so, what test is most appropriate to identify which fertilisers differ in terms of the tonnes reaped and conduct the test?  If not appropriate, why not? {-}
 
 ##### Solutions
-
 
 No. Post-hoc tests are inappropriate as the result of the ANOVA test was NOT statistically significant. i.e there is no treatment effect so it is not appropriate to determine between which treatments there is a significant difference.
 
-#### 7. Although we should firstly test whether model assumptions hold, provide a concluding statement that would be appropriate to include in a report summarising the results of this research (assuming the assumptions hold).
+#### Although we should firstly test whether model assumptions hold, provide a concluding statement that would be appropriate to include in a report summarising the results of this research (assuming the assumptions hold). {-}
 
 ##### Solutions
 
@@ -204,7 +215,7 @@ OR
 
 There is no statistically significant difference in the population mean tonnes of wheat reaped for plots treated with fertiliser type A, B or C (p = 0.684).
 
-#### 8. What assumptions have you made in this analysis?
+#### What assumptions have you made in this analysis? {-}
 
 NOTE: we intentionally focus on the conceptual understanding and then mechanics first since a focus on the assumptions is usually less appealing for students (so may lose interest) and are better understood after getting involved with the data and technique. HOWEVER, assumptions should be tested early!
 
@@ -218,7 +229,7 @@ The assumptions are:
  - The (population) variance for each of the fertiliser types are the same. That is, 
  - Random allocation of plots to the different fertiliser types
 
-#### 9. Test the Equality of Variances
+#### Test the Equality of Variances. {-}
 
 We can test the equality of variances with the Levene's test
 
@@ -251,7 +262,7 @@ Welch's test is a modification of the one-way ANOVA test allowing for unequal va
 
 IN THE EVENT THAT THE HOMOGENIETY OF VARIANCES IS REJECTED WE MAY THEN CONSIDER THE ABOVE 'ROBUST' TESTS RE THE MEANS; HOWEVER IN THIS SITUATION THAT IS NOT REQUIRED.
 
-#### 10. Explain what a residual represents and/or how it is obtained.
+#### Explain what a residual represents and/or how it is obtained. {-}
 
 ##### Solutions
 
@@ -264,7 +275,7 @@ $$ e_{ij} = Y_{ij} - \bar Y_{i} $$
 
 where the $\hat \space$ symbol indicates a predicted value.
 
-#### 11. Test the normality of the residuals using a Q-Q plot and Shapiro-Wilk goodness of fit tests.
+#### Test the normality of the residuals using a Q-Q plot and Shapiro-Wilk goodness of fit tests. {-}
 
 ![](R.svg)
 
@@ -282,7 +293,7 @@ You'll find options for *Q-Q plot* and *Shapiro-Wilk* under the *Assumption Chec
 ##### Solutions
 
 
-###### Q-Q Plot
+**Q-Q Plot**
 
 ```{r}
 qqPlot(model)
@@ -290,7 +301,8 @@ qqPlot(model)
 
 Q-Q plot does not identify obvious non-normality; however, this is difficult to gauge with such small data (5 per group).
 
-###### Shapiro-Wilk
+
+**Shapiro-Wilk**
 
 $H_0:$ Residuals are normally distributed
 
@@ -303,10 +315,9 @@ shapiro.test(resids)
 
 Data consistent with residuals coming from a normal distribution since p = 0.939
  
-#### 12. Is this study observational or experimental? If you were the researcher responsible for this study, what other issues might you be concerned about?
+#### Is this study observational or experimental? If you were the researcher responsible for this study, what other issues might you be concerned about? {-}
 
 ##### Solutions
-
 
 This is an experimental study as we are imposing a treatment, the fertiliser type, and seeing what effect it has on the response, wheat yield, AND critically, although not stated, the plots are randomly allocated to the fertiliser type.
 
@@ -314,11 +325,12 @@ It isn't stated in the description of the experiment but random allocation of pl
 
 Other possible issues to be concerned about would be to ensure that there was no spreading of the effect of a particular fertiliser type across a plot boundary to affect another plot, careful control of other variables that might affect the response, etc.
 
-## 3.2 One-way Fixed Effects ANOVA and Power
+
+### Power
 
 In the fertiliser example, we concluded that the fertiliser type used has no statistically significant effect on the mean wheat yield (p = 0.684). This does not necessarily mean that there is no effect. It just means that any actual effect of the fertiliser type is too small to be distinguishable from the inherent variability of wheat yield; at least with this sample size. This refers to the 'size of the effect' one is trying to pick up.
 
-#### 1. Consider the planning stage of this experiment. If you were to conduct an experiment you would want to know prior to the implementation if your experiment was likely to identify a certain effect size, i.e., the power you have to identify a difference (of a certain size).
+#### Consider the planning stage of this experiment. If you were to conduct an experiment you would want to know prior to the implementation if your experiment was likely to identify a certain effect size, i.e., the power you have to identify a difference (of a certain size).  {-}
 
 Suppose that the effect of fertiliser type A and B were expected to be fairly similar, resulting in a yield of about 3.0 tonnes wheat per 2 ha plot, with fertiliser type C expected to give a yield of about 2.8 tonnes wheat per 2 ha plot. In order to determine power, we also need an expected variation in the yield for a given fertiliser type. Let's assume that yields will have a standard deviation of 0.3.
 
@@ -395,7 +407,7 @@ plot(POW_calc$power~within.var, xlab = "Within SD", ylab = "Power", type = "l")
 ```
 
 
-#### 2. Repeat the above replacing 3, 3 and 2.8 with  1, 1, 0.8 respectively. Compare the 'Difference in Means' values and the 'Power v Sample Size' graphs: what do you notice?
+#### Repeat the above replacing 3, 3 and 2.8 with  1, 1, 0.8 respectively. Compare the 'Difference in Means' values and the 'Power v Sample Size' graphs: what do you notice? {-}
 
 ##### Solutions
 
@@ -411,7 +423,7 @@ power.anova.test(
 Same results: the important feature is the 'relative difference' in the group means (3, 3, 2.8 or 1, 1, 0.8)
 
 
-#### 3. Comment on the experimental design to detect differences in mean wheat yields of this size (3, 3, 2.8).
+#### Comment on the experimental design to detect differences in mean wheat yields of this size (3, 3, 2.8). {-}
 
 What might one review to assess the experimental design (both prior to the experiment and after the experiment was conducted)?
  
@@ -439,7 +451,7 @@ jmv::descriptives(
 ```
 
 
-#### 4. What is the power for a total sample size of 48 plots?
+#### What is the power for a total sample size of 48 plots? {-}
 
 ##### Solutions
 
@@ -454,7 +466,7 @@ power.anova.test(
 
 Power is about 45% for a total sample size of 48 plots
 
-#### 5. Suppose we simplify this experiment, and only have two comparison groups corresponding to fertiliser type A and C. Using the same expected difference in mean wheat yield for these two fertiliser types, what is the power now for a total sample size of 48 plots? What does this suggest about the effect of the number of comparison groups on power?
+#### Suppose we simplify this experiment, and only have two comparison groups corresponding to fertiliser type A and C. Using the same expected difference in mean wheat yield for these two fertiliser types, what is the power now for a total sample size of 48 plots? What does this suggest about the effect of the number of comparison groups on power? {-}
 
 ##### Solutions
 
@@ -473,9 +485,11 @@ The power for the same total sample size of 48 plots is now about
 Eliminating one of the comparison groups increases power.
 
 
-## 3.3 Assumptions and Multiple Comparisons
+## Assumptions and Multiple Comparisons.
 
-A researcher wanted to test a new approach to increase vocabulary among children with autism. For the experiment, 36 children were randomly assigned to one of three different treatments (Community referrals with No additional Intervention, Low-Intensity Intervention, and High-Intensity Intervention). After a fixed period of time, the increase in the children's vocabulary was measured (the number of additional words spoken over a specified time interval). The results are presented in the following table and in the file *Lab 03 - Vocab.sav*.
+### Vocabulary
+
+A researcher wanted to test a new approach to increase vocabulary among children with autism. For the experiment, 36 children were randomly assigned to one of three different treatments (Community referrals with No additional Intervention, Low-Intensity Intervention, and High-Intensity Intervention). After a fixed period of time, the increase in the children's vocabulary was measured (the number of additional words spoken over a specified time interval). The results are presented in the following table and in the file *Lab_03_Vocab.sav*.
 
   |  No  | Low  | High |
   |------|------|------| 
@@ -492,7 +506,7 @@ A researcher wanted to test a new approach to increase vocabulary among children
   |  19  |  22  |  26  |
   |  21  |  21  |  29  |
   
-#### 1. State the null and alternative hypotheses for testing.
+#### State the null and alternative hypotheses for testing. {-}
 
 ##### Solutions
 
@@ -511,7 +525,7 @@ different
 
 NOTE: there are many ways of stating the hypotheses, but you MUST be consistent and define the notation used.
 
-#### 2. Perform an ANOVA on the data. What is the value of the test statistic and the corresponding p-value?
+#### Perform an ANOVA on the data. What is the value of the test statistic and the corresponding p-value? {-}
 
 It should be clear that *Increase* is the dependent variable.
 
@@ -525,10 +539,8 @@ Analyses → ANOVA → ANOVA.
 
 ##### Solutions
 
-  
-
 ```{r}
-data <- haven::read_sav('Lab 03 - Vocab.sav')
+data <- haven::read_sav('Lab_03_Vocab.sav')
 data <- as.data.frame(data)
 data$Group <- factor(data$Group, levels=c('No', 'Low', 'High'))
 
@@ -538,7 +550,7 @@ anova(model)
 
 From the output, the test statistic is F = 63.601 and the corresponding p-value is < 0.001. Thus there is very strong evidence against the null hypothesis.
 
-#### 3. Why is it appropriate to carry out post-hoc tests to compare group means? Which test is most appropriate to test whether those not receiving additional treatment (No Intervention) were different to those receiving Low and High Intensity Interventions? Carry out this test.
+#### Why is it appropriate to carry out post-hoc tests to compare group means? Which test is most appropriate to test whether those not receiving additional treatment (No Intervention) were different to those receiving Low and High Intensity Interventions? Carry out this test. {-}
 
 Hint: the post-hoc test we want is a *Dunnett's test*.
 
@@ -564,8 +576,6 @@ There's no way to perform a Dunnett's test in jamovi, so just refer to the R res
 
 ##### Solutions
 
-  
-
 The ANOVA F test indicates that there is a difference in population mean increase in vocabulary measurements somewhere among the three group means. Hence it is appropriate to carry out a post-hoc test to determine exactly where the difference(s) lies.
 
 Since we have a control group (i.e., those children where no additional intervention took place) a Dunnett's test is appropriate, rather than Tukey's test.
@@ -584,7 +594,7 @@ summary(Dunnet)
 
 There is very strong evidence that the population mean vocabulary improvement in the High intervention group is higher than the population mean vocabulary improvement for the No intervention group (p-value = 0.000) whereas the population mean vocabulary improvement in the Low intervention group is not statistically significantly different from the No intervention group (p-value = 0.9878).
 
-#### 4. Whenever an ANOVA is performed certain assumptions most hold. Perform a test for unequal variances.
+#### Whenever an ANOVA is performed certain assumptions most hold. Perform a test for unequal variances. {-}
 
 ![](R.svg)
 
@@ -595,8 +605,6 @@ First create side-by-side box-plots and see if it looks like the groups have sim
 Using the ANOVA you created in question 2, in the Assumption Checks section, you'll find a checkbox for *Homogeneity tests* (*Equality of variances* is sometimes called *Homogeneity of variances*). Follow this up by producing side-by-side box-plots using the Analyses -> Explore -> Descriptives analysis. Do the two results correspond?
 
 ##### Solutions
-
-  
 
 ```{r}
 library(car)
@@ -611,7 +619,7 @@ The ratio of largest standard deviation to smallest is about 1.3 so applying the
 The Levene test reports a large p-value 0.741 indicating that the null hypothesis (of equal population variances in each group) should not be rejected.
 
 
-#### 5. Test the normality of the residuals using Q-Q plot and Shapiro-Wilk goodness of fit tests.
+#### Test the normality of the residuals using Q-Q plot and Shapiro-Wilk goodness of fit tests. {-}
 
 ![](R.svg)
 
@@ -622,8 +630,6 @@ Extract the residuals from the model you created in question 2 with the `residua
 Using the ANOVA from question 2, under the *Assumption Checks* section, you'll find checkboxes for a *Q-Q plot* and a *Shapiro-Wilk test*.
 
 ##### Solutions
-
-  
 
 ```{r eval=FALSE}
 library(car)
@@ -645,15 +651,14 @@ shapiro.test(resids)
 
 Shapiro-Wilk test has p-value = 0.257, so fail to reject null hypothesis. Conclude there is not enough evidence to reject the null hypothesis and it appears the assumption of normality of the residuals is valid.
 
-#### 6. Write a statement summarising the overall results of your analysis that would be appropriate for inclusion in a report.
+#### Write a statement summarising the overall results of your analysis that would be appropriate for inclusion in a report. {-}
 
 ##### Solutions
 
-  
-
 The one-way fixed effects analysis of variance provided strong evidence against the null hypothesis (p < 0.001) indicating that the population mean of vocabulary improvement is not equal across the three intervention groups. Dunnett's test confirmed that the population mean vocabulary improvement in the High intensity intervention group was statistically significantly higher than the population mean improvement for the for the No intervention group (p-value < 0.001); whilst the population mean vocabulary improvement in the Low intensity intervention was not statistically significantly higher than the population mean improvement for the for the No intervention group (p-value = 0.99).
 
-#### 7. It was suggested that children in the No Intervention group were still exposed to community referrals and so should NOT be considered as part of a control group. Suppose that it was of interest to compare the effects of the three treatment conditions to each other WITHOUT assuming the "No intervention group" to be the control group. Conduct the appropriate test to determine which of the three groups differed from one another in terms of mean vocabulary improvement.
+
+#### It was suggested that children in the No Intervention group were still exposed to community referrals and so should NOT be considered as part of a control group. Suppose that it was of interest to compare the effects of the three treatment conditions to each other WITHOUT assuming the "No intervention group" to be the control group. Conduct the appropriate test to determine which of the three groups differed from one another in terms of mean vocabulary improvement. {-}
 
 ![](R.svg)
 
@@ -667,8 +672,6 @@ TukeyHSD(aovObject)
 Look under the *Post-hoc* section. Add the variables from the left to the right that you want post-hoc tests for, then choose the correction to apply to these comparisons.
 
 ##### Solutions
-
-  
 
 If the no intervention group is not treated as a control group, then the post-hoc test that is most appropriate is the Tukey-Kramer HSD method.
 
