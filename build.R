@@ -20,9 +20,9 @@ Rmd_index = 1:length(Rmds)
 for (Rmd in Rmds) {
   match <- regexec('^(.*)\\.Rmd$', Rmd)
   name <- substring(Rmd, 1, nchar(Rmd)-4)
-  output_q <- paste(name, ' Q.html', sep="")
-  output_s <- paste(name, ' S.html', sep="")
-#  output_s <- paste(name, ' S ',rand_sol_code[Rmd_index[Rmd == Rmds]],'.html', sep="")
+  output_q <- paste(name, '_Q.html', sep="")
+#  output_s <- paste(name, '_S.html', sep="")
+  output_s <- paste(name, '_S_',rand_sol_code[Rmd_index[Rmd == Rmds]],'.html', sep="")
 
   rmarkdown::render(
     input=Rmd,
