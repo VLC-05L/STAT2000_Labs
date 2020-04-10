@@ -28,8 +28,10 @@ td, th {
 /* Settings for the solutions section */
 .section.level5 {
   background-color: #EEEEEE ;
+  border: solid #337ab7;
+  border-width:  3px;
   padding: 8px 8px 8px 8px ;
-  border-radius: 4px ;
+  border-radius: 10px ;
   margin-left: 16px ;
 }
 
@@ -37,10 +39,13 @@ td, th {
 /* Settings for the Recall seection at the start of the document. */ 
 #recall {
   color: black;
-  border-color: #FF0000 ;
-  border-radius: 6px ;
+  /*background-color: #EEEEEE ;*/
+  border: solid #337ab7;
+  /*border-width: 3px ;*/
+  border-width:  3px 0px 3px 0px;
+  /*border-radius: 10px ;*/
+  border-radius: 0px ;
   padding: 6px 30px 30px;
-  background-color: #EEEEEE ;
   margin: 60px ;
 }
 

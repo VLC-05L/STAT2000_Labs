@@ -148,7 +148,7 @@ library("lme4")
 library("lmerTest")
 ```
 
-Where we used the `lm()` function for the fixed effects ANOVA, in the `lme4` package we use the `lmer()` function. This is used similarly to the `lm()` packag, however we define the random effects a little differently. To fit a random effect like partner we would use the following: 
+Where we used the `lm()` function for the fixed effects ANOVA, in the `lme4` package we use the `lmer()` function. This is used similarly to the `lm()` package, however we define the random effects a little differently. To fit a random effect like partner we would use the following: 
 ```{r eval=F}
 fit_1 = lmer(write_off~(1|partner), data = data)
 ```
