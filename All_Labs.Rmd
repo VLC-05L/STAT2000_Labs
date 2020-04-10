@@ -4,7 +4,6 @@ date: "Semester 1, 2020"
 output: 
   html_document: 
     toc: true
-    toc_depth: 3
     toc_float:
       collapsed: true
       smooth_scroll: true
@@ -14,7 +13,7 @@ output:
     include:
       after_body: ./styles.js
     pandoc_args: [
-      "--number-offset", "8,0,0,0",
+      "--number-offset", "1,0,0,0",
       ]
     css: Labs.css
 params:
@@ -23,24 +22,10 @@ params:
     value: TRUE
 ---
 
-```{r include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-loadNamespace('haven')
-
-data <- haven::read_sav('Lab_08_Stress.sav')
-data <- as.data.frame(data)
-
+```{r setup_all, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,tidy=TRUE)
 ```
 
-```{block include=(!params$inc_solu)}
-<style>
-.section.level5 {
-  display: none ;
-}
-</style>
+```{r child=c('./Lab_01.Rmd', './Lab_02.Rmd', './Lab_03.Rmd', './Lab_04.Rmd', './Lab_05.Rmd', './Lab_06.Rmd', './Lab_07.Rmd', './Lab_08.Rmd', './Lab_09.Rmd', './Lab_10.Rmd', './Lab_11.Rmd', './Lab_12.Rmd')}
 ```
 
-## Lab 8 - Week 9 {-}
-
-This page has not been built. 
