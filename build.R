@@ -40,6 +40,8 @@ rand_sol_code = c("wqib",   "UnxCQQ", "sdLi",   "0ySXQ",  "e3nP",   "80WX",
 # Loop for builds
 #Rmds <- list.files(pattern='.*\\.Rmd')
 Rmds <- list.files(pattern='Lab_.*\\.Rmd')
+Rmd_index = 1:length(Rmds)
+
 
 for (i in 1:length(Rmds)) {
   Rmd = Rmds[i]
