@@ -46,7 +46,7 @@ if ( ! require('jmv'))
 
 ### Recall Lecture 6: {#recall -}
 
- - Revision: One-way randome effects ANOVA
+ - Revision: One-way random effects ANOVA
  - Two-way random effects ANOVA
  - Mixed effects ANOVA
 
