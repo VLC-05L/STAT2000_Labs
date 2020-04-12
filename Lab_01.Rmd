@@ -38,6 +38,7 @@ xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
 
 ```
 
+<!-- This code is to turn on or off the solutions -->
 ```{block include=(!params$inc_solu)}
 <style>
 .section.level5 {
@@ -52,6 +53,8 @@ xfun::pkg_load2(c("base64enc", "htmltools", "mime"))
     <meta http-Equiv="Pragma" Content="no-cache" />
     <meta http-Equiv="Expires" Content="0" />
 </head>
+
+
 
 ## Lab 1 - Week 2 {-}
 

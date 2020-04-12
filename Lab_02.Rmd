@@ -35,6 +35,7 @@ loadNamespace('haven')
 loadNamespace('car')
 ```
 
+<!-- This code is to turn on or off the solutions -->
 ```{block include=(!params$inc_solu)}
 <style>
 .section.level5 {
@@ -42,6 +43,15 @@ loadNamespace('car')
 }
 </style>
 ```
+
+<!-- This code is to ensure the iframe is not cached and always load the most recent version -->
+<head>
+    <meta http-Equiv="Cache-Control" Content="no-cache" />
+    <meta http-Equiv="Pragma" Content="no-cache" />
+    <meta http-Equiv="Expires" Content="0" />
+</head>
+
+
 
 
 ## Lab 2 - Week 3 {-}
