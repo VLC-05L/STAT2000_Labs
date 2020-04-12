@@ -96,7 +96,7 @@ xfun::embed_file("Lab_04_Box_Office_3.csv")
 
 
 ```{r include=FALSE}
-S_files = list.files(pattern='04_S.*')
+S_files = list.files(pattern='04_S_.*')
 if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
 ```
 
@@ -105,8 +105,8 @@ cat("### Additional Solution Files {-}")
 ```
   
 ```{r echo=FALSE, include = params$inc_solu & S_add_files}
-zip::zipr(zipfile = "Additional_Files.zip", files = S_files)
-xfun::embed_file("Additional_Files.zip")
+zip::zipr(zipfile = "Lab_04_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_04_Additional_Files.zip")
 ```  
 
 

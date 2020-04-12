@@ -76,6 +76,22 @@ xfun::embed_file("Lab_05_Advertising.sav")
 ```  
 
 
+
+```{r include=FALSE}
+S_files = list.files(pattern='05_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_05_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_05_Additional_Files.zip")
+```  
+
+
 ## Two Way ANOVA
 
 ### Recall and Mood

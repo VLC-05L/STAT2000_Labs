@@ -43,6 +43,7 @@ loadNamespace('car')
 </style>
 ```
 
+
 ## Lab 2 - Week 3 {-}
 
 ### Recall Lecture 2: {#recall -}
@@ -68,6 +69,22 @@ On completion of this lab you will be able to:
 In the Week 2 lecture (and in Module 3) we discussed foundational aspects of study design, including but not limited to, identifying: the type of study appropriate for your investigation (survey, observational, experiment); how you could obtain representative samples and measure key information validly and reliably; aspects surrounding bias and precision. 
 
 We now employ such ideas in the critical appraisal of existing published studies, and begin to design our own experiments.
+
+
+```{r include=FALSE}
+S_files = list.files(pattern='02_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_02_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_02_Additional_Files.zip")
+```  
+
 
 ### Required Readings -- Read first case study prior to attending your lab  {-}
 
