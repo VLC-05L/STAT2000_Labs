@@ -11,7 +11,7 @@ if ( ! require(rmarkdown))
 
 # Release dates
 #current_time_UTC = as.POSIXlt(Sys.time(), tz = "UTC")
-current_time_UTC = as.POSIXlt(Sys.time(), tz = "UTC") - 1*60*60*24*7*10 # last number is weeks
+current_time_UTC = as.POSIXlt(Sys.time(), tz = "UTC") - 1*60*60*24*7*3 # last number is weeks
 
 release_time_AEST_txt = 
   c("2020-03-03 09:50", # W2 - Lab 1
