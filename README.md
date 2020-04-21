@@ -12,4 +12,3 @@ Improvements to be made:
 	1. Remove common elements to all labs and add to single document to be called. 
 	   Eg. date = "Semester 1, 2021" - This will only need to be updated in one spot then. 
     2. Add build date and time to document. 
-	3. Use only one file per week that is built with the solutions conditional on the date. Need appveyor account to have scheduled builds added to my account. 
