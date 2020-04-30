@@ -71,7 +71,7 @@ On completion of this lab you will be able to:
 
  - Identify when it is appropriate to apply non-parametric statistics
  - Apply the appropriate test and interpret the associated results
- - Recognise and summarise the study design used in research articles.
+ - Recognise and summarise the study design used in research articles
 
 ### Overview {-}
 
