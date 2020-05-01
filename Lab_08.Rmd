@@ -289,7 +289,7 @@ We are 95% confident that, on average, the Hopkins score measuring mental health
   
   iii. 
       
-A confidence interval gives an estimate of the size of an effect (in this case the effect of stress due to life events) as well as an estimate of the error associated with that estimate. It can also be easily interpreted to indicate whether a particular variable is statistically significant or not at a particular significance level, $\alpha$. For example: if the $(1 - \alpha)$% confidence interval for β1 does not contain 0, this is equivalent to stating that $\beta_1$ is statistically different from 0 at the 5% significance level. (i.e. rejecting $H_0:\beta_1 = 0$ at the 5% significance level.)
+A confidence interval gives an estimate of the size of an effect (in this case the effect of stress due to life events) as well as an estimate of the error associated with that estimate. It can also be easily interpreted to indicate whether a particular variable is statistically significant or not at a particular significance level, $\alpha$. For example: if the $(1 - \alpha)$% confidence interval for $\beta_1$ does not contain 0, this is equivalent to stating that $\beta_1$ is statistically different from 0 at the 5% significance level. (i.e. rejecting $H_0:\beta_1 = 0$ at the 5% significance level.)
       
 Since a confidence interval can indicate the size of an effect (which is about practical or clinical significance) and statistical significance (which is about the amount of evidence against a particular hypothesis), they are at times a better way of presenting results compared with a p-value alone.
 
