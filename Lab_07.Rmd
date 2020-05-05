@@ -165,6 +165,17 @@ t.test(data$BeforeSurgery, data$AfterSurgery, paired=TRUE)
 
 Results consistent with non-parametric equivalent above. Of the two methods in question, the parametric test is a more powerful test than the non-parametric equivalent for increasing sample size and when the assumptions are met, hence whenever it is possible to use the parametric test it is preferable. In this particular situation the p-values were essentially equally strong and lead to the same conclusion.
 
+
+#### Identify one problem with the study outlined above. {-}
+
+##### Solutions
+
+The neurologist is interested in whether some treatment is effective or not. The measurement taken here is a rating on a 10 point scale. This method sounds fairly subjective, and could be a source of error. The fact that the neurologist is taking the measurements themselves means that they are not blinded. The neurologist may (unconsciously) introduce their own bias to the results due to a desire to have the test be successful or not. 
+
+This is also only an observational study and not an experiment. There is not random allocation of patients to different groups. Could it be that the reduction in score is due some other factor not measured? Time itself, the change in season, the snacks they have in this neurologists patient waiting room? 
+
+
+
 ## Case Study
 
 In Lab 2 we reviewed the following research paper:
