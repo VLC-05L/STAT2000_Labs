@@ -61,7 +61,7 @@ data <- as.data.frame(data)
 </head>
 
 
-## Lab 9 - Week 10 {-}
+## Lab 9 - Week 10 {-} 
 
 ### Recall Lecture 9: {#recall -}
 
