@@ -79,6 +79,20 @@ In the Week 8 lecture we looked at testing for a linear relationship using the p
 xfun::embed_file("Lab_08_Stress.sav")
 ```  
 
+```{r include=FALSE}
+S_files = list.files(pattern='08_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_08_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_08_Additional_Files.zip")
+```  
+
 
 
 ## Correlation and Regression

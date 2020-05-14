@@ -36,14 +36,6 @@ data <- haven::read_sav('Lab_09_Surgical.sav')
 data <- as.data.frame(data)
 ```
 
-```{block include=(!params$inc_solu)}
-<style>
-.section.level5 {
-  display: none ;
-}
-</style>
-```
-
 <!-- This code is to turn on or off the solutions -->
 ```{block include=(!params$inc_solu)}
 <style>
@@ -84,6 +76,20 @@ In the Week 9 lecture we covered the multiple linear regression model. We looked
 
 ```{r echo=FALSE}
 xfun::embed_file("Lab_09_Surgical.sav")
+```  
+
+```{r include=FALSE}
+S_files = list.files(pattern='09_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_09_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_09_Additional_Files.zip")
 ```  
 
 
