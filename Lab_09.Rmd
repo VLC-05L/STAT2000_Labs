@@ -165,7 +165,7 @@ plot(BloodClot~Liver1, data)
 cor.test(data$BloodClot,data$Liver1)
 ```
 
-There does appear to be a linear relationship between the two variables. This is statistically significant (p=0.0001). This is suggesting multicollinearity. 
+There does appear to be a linear relationship between the two variables. This is statistically significant (p=0.0001). The correlation is not particularly high though at r = 0.50. We will test for multicollinearity next week using the Variance Inflation Factor. 
 
 
 #### Should both blood clotting score, $X_1$, and liver function test score, $X_2$ be included in a model for survival time, $Y$?  {-}
@@ -622,55 +622,3 @@ hist(resids)
 From the residual plots, observations 5, 28 and 38 are possible outliers that might be worth further study. Is there anything specific to these points that might explain why they seem to be behaving a bit differently from the others? In this exercise we are limited in being able to answer this question but in reality we would go back to our patient records and look for possible explanations. Using the data only, observations 5 and 38 are both high on the enzyme test score.
 
 
-#### Are there any observations which have very large Cook's distance compared to the rest? What does this tell us about the effect of those particular observations? {-}
-
-![](R.svg)
-
-Pass the model to the `cooks.distance()` function.
-
-```{r eval=FALSE}
-data$LiverC <- data$Liver1 - mean(data$Liver1)
-data$EnzymeC <- data$Enzyme1 - mean(data$Enzyme1)
-model <- lm(Survival1 ~ Liver1 + Enzyme1 + LiverC:EnzymeC, data)
-cooks.distance(model)
-```
-
-![](v.svg)
-
-Use the R code above
-
-
-##### Solutions
-
-From the Figure below there seems to be one observation which is far more influential than the others. This is in fact observation 5 which we flagged as a potential outlier from consideration of the residual plots.
-
-```{r}
-cooks <- cooks.distance(model)
-boxplot(cooks)
-```
-
-#### Try refitting your regression model excluding particular individual observations which have large Cook's D values. Have the regression coefficients changed very much? {-}
-
-![](R.svg)
-
-It's possible to create a new data frame with the 5th row removed as follows:
-
-```{r eval=FALSE}
-dataWithout5 <- data[-5,]
-```
-
-![](v.svg)
-
-In jamovi, under the Data tab, you'll find a button for 'Filters'. Add a new filter to the data set. Specifying the formula `ROW() != 5` will filter out the fifth row from the analyses, causing them to re-run.
-
-Have the regression coefficients changed very much?
-
-
-##### Solutions
-
-```{r}
-dataWithout5 <- data[-5,]
-lm(Survival1 ~ Liver1 + Enzyme1 + LiverC:EnzymeC, dataWithout5)
-```
-
-Refitting the regression model without observation 5 does result in the regression coefficients changing for the interaction term and the enzyme test score term. Is this a better model for the remaining data? The $R^2$ value suggests not.
