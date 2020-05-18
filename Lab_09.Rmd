@@ -324,7 +324,7 @@ The total sum of squares represents the amount of variation in the response vari
 $$ SS_{total} = \sum_{i=1}^n(Y_i - \bar Y)^2 $$
 
 
-#### Use residual sum of squares and total sum of squares values for the model of survival time by liver function test score and enzyme function test score ($Y$ by $X_2$ and $X_4$) from the previous question to confirm the calculation of the R squared and adjusted R squared values.
+#### Use residual sum of squares and total sum of squares values for the model of survival time by liver function test score and enzyme function test score ($Y$ by $X_2$ and $X_4$) from the previous question to confirm the calculation of the R squared and adjusted R squared values. {-}
 
 ```{r}
 liverEnzyme_summary = summary(liverEnzymeModel)
