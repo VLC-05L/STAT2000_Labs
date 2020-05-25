@@ -118,7 +118,7 @@ Recall the data set used last week in **Lab_09_Surgical.sav** which recorded the
 #### Fit a multiple linear regression model with $X_1$ and $X_2$ as predictors. Look to see if the predictors are statistically significantly linearly related to survival time. {-}
 
 
-##### Solutions 
+##### Solutions  
 
 ```{r include = FALSE}
 data = haven::read_sav('Lab_09_Surgical.sav')
