@@ -545,7 +545,12 @@ Method 3: 42.104 - 2.1607
 Essentially the effect of the different learning methods is to shift this linear relationship between language score and IQ up or down. On average, for students with any particular IQ, test scores will on average be 4.908 higher for method 2 compared to method 1 and 2.161 lower for method 3 than method 1.
 
 
-<center>![](Lab_10_Language_2.png){width=400px}</center>
+```{r}
+data = cbind(data,predict(model,interval="confidence"))
+ggplot(data = data, aes(x=IQ, y=LANGUAGE, colour = METHOD)) + 
+  geom_point(size = 2) + 
+  geom_line(aes(y=fit))# + geom_ribbon(aes(ymin=lwr,ymax=upr),alpha=0.05)
+```
 
 
 
@@ -637,8 +642,14 @@ summary(model)
 
 In this particular example, the interaction term is not statistically significant (p = 0.37) so the previous model would be preferred. To understand the interaction effect however, consider the scatterplot below. As in the previous model, the data is modelled using three lines but including an interaction term allows the lines to have separate slopes.  This is consistent with our definition of interaction. The slope represents the effect of IQ on language test score. If this changes for the different teaching methods then obviously we have a Teaching Method by IQ interaction.
 
-<center>![](Lab_10_lines.png)</center>
+```{r}
+data2 = data[,1:3]
+data2 = cbind(data2,predict(model,interval="confidence"))
 
+ggplot(data = data2, aes(x=IQ, y=LANGUAGE, colour = METHOD)) + 
+  geom_point(size = 2) + 
+  geom_line(aes(y=fit)) #+ geom_ribbon(aes(ymin=lwr,ymax=upr),alpha=0.05)
+```
 
 We can see this in detail looking at the fitted model:
 
