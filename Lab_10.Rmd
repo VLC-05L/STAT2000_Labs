@@ -59,10 +59,10 @@ library(ggplot2)
 
 ### Recall Lecture 10: {#recall -}
 
- - Outliers and Influential Points (Module 9.6)
- - Variance Inflation Factors (Module 9.8.1)
+ - Outliers and Influential Points
+ - Variance Inflation Factors
  - Multicollinearity
- - Linear Statistical Models (Module 10)
+ - Linear Statistical Models
  - ANOVA as Regression 
  - ANCOVA
 

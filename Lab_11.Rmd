@@ -23,6 +23,113 @@ params:
     value: TRUE
 ---
 
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if ( ! require('haven'))
+  install.packages('haven')
+if ( ! require('car'))
+  install.packages('car')
+if ( ! require('emmeans'))
+  install.packages('emmeans')
+if ( ! require('ggplot2'))
+  install.packages('ggplot2')
+library(ggplot2)
+```
+
+<!-- This code is to turn on or off the solutions -->
+```{block include=(!params$inc_solu)}
+<style>
+.section.level5 {
+  display: none ;
+}
+</style>
+```
+
+<!-- This code is to ensure the iframe is not cached and always load the most recent version -->
+<head>
+    <meta http-Equiv="Cache-Control" Content="no-cache" />
+    <meta http-Equiv="Pragma" Content="no-cache" />
+    <meta http-Equiv="Expires" Content="0" />
+</head>
+
+
 ## Lab 11 - Week 12 {-}
 
-This page has not been built. 
+### Recall Lecture 11: {#recall -}
+
+ - Model Building
+
+
+### Lab Objectives {-}
+
+On completion of this lab you will be able to:
+
+ - understand the process of fitting a linear model
+ - use R squared to assess if new predictors are appropriate 
+ - identify circumstances where ANCOVA is valuable over ANOVA
+
+### Overview {-}
+
+In the Week 11 lecture, the process of model fitting was demonstrated. 
+
+
+### Data Files {-}
+
+```{r echo=FALSE}
+xfun::embed_file("Lab_11_AFL.sav")
+```  
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab_09_Surgical.sav")
+```
+
+```{r include=FALSE}
+S_files = list.files(pattern='11_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_11_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_11_Additional_Files.zip")
+```  
+
+
+## Model Building
+
+### AFL Data
+
+Consider the data set that is available as *Lab_11_AFL.sav*, which was the focus of the week 11 lecture.
+
+The response variable of interest, MCG, is the match attendance in thousands at Australian Football League matches on Saturdays at the Melbourne Cricket Ground. We are interested in building a model that "best explains" MCG Saturday AFL attendance. The other variables are:
+
+ - Other: the sum of the attendances (in thousands) at other AFL matches in Melbourne and Geelong on the same day as the match in question.
+ - Temp: the forecast maximum temperature on the day of the match, in whole degrees C, found in The Weekend Australian newspaper.
+ - Members: the sum of the memberships of the two clubs whose teams were playing the match in question (in thousands).
+ - Top50: the number of players in the top 50 in the AFL who happened to be playing in the match in question. Date date of the match in the format dd/mm/yy. 
+ - Home & Away: abbreviation for the home and away teams.
+I have also created 2 new variables so that you don’t need to do the Transform – Compute or Transform – Recode steps yourself.  These are;
+ - LogMCG: the log (base e) of MCG
+ - Interstate: this is 1 for interstate teams, and 0 for Victorian teams
+
+#### Produce graphs to show the effect of each of the predictor variables on MCG {-}
+#### Try models with one predictor for MCG, and investigate the residuals.  Is there a problem with the variance of the residuals?   {-}
+#### Try a number of models including the predictors, and find a good model for log(MCG) {-}
+#### Check the residuals of your chosen model. {-}
+
+##### Solutions
+
+No solutions are provided for this lab. See the lecture slides. 
+
+#### 2. Surgery
+
+The *Lab_09_Surgical.sav* file is the same data we have looked at previously. Although we have seen this data set before, for the sake of this exercise imagine you are seeing it for the first time. Carry out initial exploratory univariate and bivariate analyses on the response and explanatory variables. Are there any outliers? Are the distributions skewed? Are there potential multicollinearity problems? Build your model gradually. Use residual analyses where appropriate to add insight and guide your choices.
+
+##### Solutions
+
+No solutions provided for this lab.
