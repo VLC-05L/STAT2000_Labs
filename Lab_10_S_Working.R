@@ -185,9 +185,9 @@ summary(lm_7)
 
 data = cbind(data,predict(lm_7,interval="confidence"))
 
-ggplot(data = data, aes(x=IQ, y=LANGUAGE, colour = METHOD)) + 
-  geom_point(size = 2) + 
-  geom_line(aes(y=fit)) # + geom_ribbon(aes(ymin=lwr,ymax=upr),alpha=0.05)
+ggplot(data = data, aes(x=IQ, y=LANGUAGE)) + 
+  geom_point(size = 2,aes(colour = METHOD)) + 
+  geom_line(aes(y=fit,colour = METHOD)) + geom_ribbon(aes(ymin=lwr,ymax=upr,fill = METHOD),alpha=0.1)
 
 
 Anova(lm_7,type=2)
