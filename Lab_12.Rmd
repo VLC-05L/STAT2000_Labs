@@ -23,6 +23,7 @@ params:
     value: TRUE
 ---
 
+
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -30,10 +31,12 @@ if ( ! require('haven'))
   install.packages('haven')
 if ( ! require('car'))
   install.packages('car')
-if ( ! require('ResourceSelection'))
-  install.packages('ResourceSelection')
+if ( ! require('rcompanion'))
+  install.packages('rcompanion')
+library("rcompanion")
 ```
 
+<!-- This code is to turn on or off the solutions -->
 ```{block include=(!params$inc_solu)}
 <style>
 .section.level5 {
@@ -42,6 +45,282 @@ if ( ! require('ResourceSelection'))
 </style>
 ```
 
+<!-- This code is to ensure the iframe is not cached and always load the most recent version -->
+<head>
+    <meta http-Equiv="Cache-Control" Content="no-cache" />
+    <meta http-Equiv="Pragma" Content="no-cache" />
+    <meta http-Equiv="Expires" Content="0" />
+</head>
+
+
 ## Lab 12 - Week 13 {-}
 
-This page has not been built. 
+### Recall Lecture 12:  {#recall -}
+
+ - The logistic regression model
+ - Interpreting parameters
+ - Calculating the probability for a given value of the predictor
+ - Goodness of fit
+
+### Lab Objectives {-}
+
+On completion of this lab you will be able to:
+
+ - Create logistic regression models
+ - Interpret parameters
+ - Test the significance of potential predictors
+
+### Overview {-}
+
+In the Week 12 lecture we covered Logistic Regression.
+
+
+### Data Files {-}
+
+```{r echo=FALSE}
+xfun::embed_file("Lab_12_Pass_out.sav")
+```  
+<br>
+```{r echo=FALSE}
+xfun::embed_file("Lab_12_Goal_Kicking_NRL_2020.csv")
+```  
+
+```{r include=FALSE}
+S_files = list.files(pattern='12_S_.*')
+if(length(S_files) == 0){S_add_files = F} else {S_add_files = T}
+```
+
+```{r echo=FALSE, results='asis', eval = params$inc_solu & S_add_files}
+cat("### Additional Solution Files {-}")
+```
+  
+```{r echo=FALSE, include = params$inc_solu & S_add_files}
+zip::zipr(zipfile = "Lab_12_Additional_Files.zip", files = S_files)
+xfun::embed_file("Lab_12_Additional_Files.zip")
+```  
+
+
+## Logistic Regression
+
+### Military Manoeuvres
+
+Military pilots sometimes pass out when their brains are deprived of oxygen due to G-Forces during violent manoeuvres. Data were obtained by producing similar symptoms to volunteers by exposing their lower body to negative air pressure. Each pilot's age was recorded along with whether or not they passed out during the training session - the data are available in *Lab_12_Pass_out.sav*. The lecture contained a subset of this data. 
+
+Below is a plot of `PassOut` against `Age`. Note the `jitter()` on the response. This is so we can see of there are several data points for a given response and predictor value. 
+
+```{r echo=FALSE}
+data <- haven::read_sav('Lab_12_Pass_out.sav')
+data <- as.data.frame(data)
+plot(jitter(PassOut,0.2) ~ Age, data, ylab="PassOut")
+```
+
+#### Explain why a logistic regression model is appropriate for analysing these data.  {-}
+
+##### Solutions
+
+Outcome variable is categorical with two possible outcomes (pass out, or not), and explanatory variable is continuous (age in years)
+
+#### Write the equation of the fitted logistic regression model. {-}
+
+![](R.svg)
+
+Use the `glm()` function, with the `family='binomial'` argument specified:
+
+```{r eval=FALSE}
+glm(PassOut ~ Age, family="binomial", data=data)
+```
+
+![](v.svg)
+
+Analyses -> Regression -> Logistic Regression -> 2 Outcomes. You should be able to figure out which is the dependent variable.
+
+##### Solutions
+
+The logistic model is:
+
+  $$ log({p \over {1-p}}) = \beta_0 + \beta_1x $$
+
+```{r echo=FALSE}
+model <- glm(PassOut ~ Age, data=data, family="binomial")
+model
+```
+
+Using output, fitted regression model is:
+
+  $$ log({p \over {1-p}}) = -3.727 + 0.130 \times Age $$
+
+where p is the probability of passing out
+
+#### Interpret the Age parameter value of '0.130'. {-}
+
+##### Solutions
+
+For each additional year of age, the log of the odds of a pilot passing out increases by 0.130.
+
+#### Identify the test statistic and p-value to test whether there is a statistically significant relationship between age and whether one passes out, and also state your finding testing at the 5% significance level. {-}
+
+![](R.svg)
+
+To get the appropriate test statistic and p-value, call the `summary()` function on the model we created in the previous question.
+
+![](v.svg)
+
+This should already be visible in the output
+
+##### Solutions
+
+For the logistic regression model
+
+  $$ log({p \over {1-p}}) = \beta_0 + \beta_1x $$
+
+We test
+
+  $H_0:  \beta_1 = 0$ (no relationship)
+  
+  $H_a:  \beta_1 \ne 0$
+  
+```{r}
+summary(model)
+```
+
+Test statistic: 2.06
+
+p-value:  0.040
+
+Conclusion: Since p = 0.040, we reject the null at the 5% significance level and conclude that there is a statistically significant relationship between age and passing out.
+
+#### Use the 95% confidence interval of the slope parameter to test whether there is a statistically significant relationship between age and whether one passes out. {-}
+
+##### Solutions
+
+```{r}
+confint(model)
+```
+
+The 95% CI is (0.02, 0.28). Since the interval doesn’t include 0, this suggests that age is a statistically significant predictor of whether one passes out.
+
+#### Use the model to estimate, through calculation, the probability of a person aged 44 years passing out. {-}
+
+##### Solutions
+
+For the log of the odds:
+
+$$ log({p \over {1-p}}) = -3.727 + 0.130 (44) $$
+
+$$ = 1.993 $$
+	
+To get the odds, we take the exponential of both sides:
+
+$$ { p \over {1-p} } = e^{1.993} $$
+
+$$ = 7.3375 $$
+	
+Therefore to get the probability:
+
+$$ p = {7.3375 \over {1 + 7.3375}} = 0.8801 $$
+
+The probability of a person aged 44 years passing out is 0.88 (or 88%).
+
+#### Assess the goodness of fit of the model. {-}
+
+Do this by calculating the proportion of times the model correctly classifies passing out or not passing out. 
+
+Also calculate the pseudo R-squared values.  
+
+
+![](R.svg)
+
+```{r eval=FALSE}
+class_data_frame = data.frame(response = data$PassOut,predicted = round(fitted(model),0))
+class_table = xtabs(~ predicted + response, data = class_data_frame)
+class_table
+sum(diag(class_table))/sum(class_table) # Diagonal elements are correct classifications. Look at the proportion.
+
+nagelkerke(model)
+```
+
+
+![](v.svg)
+
+For the pseudo R-squared values, go to Model Fit. For the classification table go to Prediction and select Classification table and Accuracy 
+
+##### Solutions
+
+```{r eval=TRUE}
+class_data_frame = data.frame(response = data$PassOut,predicted = round(fitted(model),0))
+class_table = xtabs(~ predicted + response, data = class_data_frame)
+class_table
+sum(diag(class_table))/sum(class_table) # Diagonal elements are correct classifications. Look at the proportion.
+
+nagelkerke(model)
+```
+
+- Classification table indicates overall 75% are correctly classified by the model. More closely we notice that two-thirds of the time when Not a Pass Out and 80% when Pass Out.
+- the Cox and Snell value is 0.296 
+- Nagelkerke $R^2$ value is 0.403 which is ok (closer to 1 the better)
+
+
+
+#### In the dataset there is another variable named MaintainConsciousness. This is simply the opposite of the PassOut variable. We can think of this response variable as just being a redefinition of what constitutes a “success” in the experiment. Below is a plot of this variable against Age.  {-}
+Run the logistic regression and find the estimated parameters of the model. How do they compare with the values you found in question 2.
+
+##### Solutions
+
+Running the logistic regression results in the following output:
+
+```{r echo=FALSE}
+model <- glm(MaintainConsciousness ~ Age, data=data, family="binomial")
+model
+```
+
+The model of the log odds is therefore:
+
+$$ log({p \over {1-p}}) = 3.727 - 0.130 \times Age $$
+
+The is almost the exact same model as in exercise 2 except the parameter estimates are multiplied by minus one. The effect this has is to create a mirror image of the curved probability plot when the opposite definition of a success is used. Looking at the two scatter plots, we can see that the scatter plots are actually mirror images of each other as well, so we would expect that the probability curve to also be a mirror image.
+
+#### Use the model to estimate, through calculation, the probability of a person aged 44 years maintaining consciousness. How is this answer related to question 6? {-}
+
+
+##### Solutions
+
+For the log of the odds:
+
+$$ log({p \over {1-p}}) = 3.727 - 0.130 (44) $$
+
+$$ = -1.993 $$
+	
+To get the odds, we take the exponential of both sides:
+
+$$ { p \over {1-p} } = e^{-1.993} $$
+
+$$ = 0.1363 $$
+	
+Therefore to get the probability:
+
+$$ p = {0.1363 \over {1 + 0.1363}} = 0.120 $$
+
+Therefore, the probability of a pilot aged 44 not passing out is 0.12, or 12%. This means that the probability of the pilot passing out is 100% - 12% = 88%. This is the same probability estimated at question 6.
+
+This shows that while how we define a "success" in each trial leads to different models, the results or interpretation of the results will be consistent.
+
+
+
+### NRL Goal Kicking 
+
+The data file *Lab_12_Goal_Kicking_NRL_2020.csv* contains data for the begining of the 2020 NRL season relating to goal kicking. Load the data set and have a play at fitting logistic regression models to predict `Result` based on other variables. 
+
+While we have only looked at logistic regression with one numerical predictor, the interpretation of models with more predictors as well as categorical predictors is analogous to the extension in linear models. 
+
+For an interesting walk through the data set, visit: https://medium.com/the-sports-scientist/how-to-build-your-own-goal-kicker-rating-system-63ea0916fbe4
+
+
+##### Solutions
+
+No solution for this exercise.
+
+
+
+## Revision Time
+
+This part of the lab provides you time to ask your tutor for assistance with any element of the course. There are no set exercises. Please make the most of this time - I hope that it reduces your concerns and stress levels.
