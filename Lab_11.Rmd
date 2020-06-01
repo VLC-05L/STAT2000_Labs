@@ -126,7 +126,7 @@ I have also created 2 new variables so that you don’t need to do the Transform
 
 No solutions are provided for this lab. See the lecture slides. 
 
-### Surgery {-}
+### Surgery 
 
 The *Lab_09_Surgical.sav* file is the same data we have looked at previously. Although we have seen this data set before, for the sake of this exercise imagine you are seeing it for the first time. Carry out initial exploratory univariate and bivariate analyses on the response and explanatory variables. Are there any outliers? Are the distributions skewed? Are there potential multicollinearity problems? Build your model gradually. Use residual analyses where appropriate to add insight and guide your choices.
 
