@@ -7,14 +7,10 @@ output:
     toc_float:
       collapsed: true
       smooth_scroll: true
-    number_sections: true
     self_contained: true
     theme: default
     include:
       after_body: ./styles.js
-    pandoc_args: [
-      "--number-offset", "1,0,0,0",
-      ]
     css: Labs.css
 params:
   inc_solu:
@@ -26,6 +22,10 @@ params:
 knitr::opts_chunk$set(echo = TRUE,tidy=TRUE)
 ```
 
+---
+
 ```{r child=c('./Lab_01.Rmd', './Lab_02.Rmd', './Lab_03.Rmd', './Lab_04.Rmd', './Lab_05.Rmd', './Lab_06.Rmd', './Lab_07.Rmd', './Lab_08.Rmd', './Lab_09.Rmd', './Lab_10.Rmd', './Lab_11.Rmd', './Lab_12.Rmd')}
 ```
+
+---
 
